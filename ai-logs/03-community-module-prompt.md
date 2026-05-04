@@ -1,106 +1,23 @@
-# Community Module Implementation Prompt
+Please complete the Community module for the RockBond Web App based on the Figma design, the screenshots in figma_photo/Community/, and the requirements document.
 
-Complete the Community module for the RockBond Web App based on the Figma design, screenshots in `figma_photo/Community/`, and the requirements document.
+The Community page should focus on social connections and circle discovery. It should not handle activities, climbing locations, or session discovery, because those belong to the Explore module. The page must be mobile-first and should closely match the Partners Discover and Circles Discover pages in Figma.
 
-## Goal
+The route should be /community. The page should include two tabs: Partners and Circles. Keep the universal RockBond Header at the top, include a real search bar, and provide a segmented control for switching between Partners and Circles. The bottom navigation should remain functional, with the Community icon active.
 
-The Community page is responsible for social connections and circle discovery among users. It no longer handles activities, locations, or session discovery (which belong to the Explore module). The page must be **mobile-first**, with a visual style closely matching the "Partners Discover" and "Circles Discover" pages in Figma.
+For Partners, show a list of potential climbing partners. Each partner card should include an avatar, username, grade or climbing level, location or distance, short bio, tags, and a friend status button on the right.
 
-## Page Structure
+Clicking the avatar or name area should navigate to /friend/:friendId. If the user is not yet a friend, the button should show an Add Friend icon. Clicking Add Friend should not send the request immediately. Instead, it should expand a brief friend request input area where the user can edit a short message, such as “Hey Marcus, want to connect for a climb sometime?” When the user clicks Send, save the request to rockbond_friendRequests with pending status. If a request has already been sent, show a Pending state and prevent duplicate requests. Once the request is accepted, the status should become Friend and the button should change into a Chat icon that navigates to /chat/:friendId.
 
-The Community page route is `/community` and includes two main tabs:
+Do not show Community Events at the bottom of the Partners page. Event and session discovery should only appear in Explore.
 
-- `Partners`
-- `Circles`
+Use localStorage to simulate the friend request flow with rockbond_friendRequests, rockbond_friends, and rockbond_chats. Friend request records should include id, fromName, toFriendId, toName, message, status, and createdAt. The Notifications page should show pending friend requests and provide both Accept and Reject actions. Accept should update the request to accepted, write the user to rockbond_friends, and initialize chat data. Reject should update the request to rejected, not create a friendship, and remove it from pending notifications.
 
-The top section must retain the universal RockBond Header, a search bar, and a segmented control for switching between Partners and Circles. The bottom navigation bar must remain functional, with the "Community" icon in an active state.
+For Circles, replicate the layout from the Figma circles discover page. Include My Active Groups with a “3 Groups” pill, active group cards such as Peak Seekers and Crag Collective, Discover New Circles with a large Alpine Pioneers background card, glass-style overlay information, member count, tags, Recruiting Now status, and Join button. Also include list items such as Gear Nerds Anonymous and Indoor Technicians with plus or joined toggle buttons. Add a Featured Circles section with horizontal rounded cards such as Power Dyno, overlapping avatar stacks, member counts, and a See all link. At the bottom, add a light green dashed create-circle entry with the text “Don’t see your tribe?” and a circular plus button.
 
-## Partners Functional Requirements
+Circle Join and Plus buttons should persist joined state in localStorage. You may reuse rockbond_joinedChallenges or an equivalent joined circle state. Once joined, the button should show Joined or a checked state, and this state must remain after page refresh. The full create-circle flow is not required in this phase.
 
-The Partners page displays a list of potential climbing partners.
+The Community search bar and filter button should be real interactions, not decoration. Search should work for the current tab. In Partners, search should match climber name, location, skill level, goal, and tags. In Circles, search should match title, members, description, tags, status, and beginner friendly information. The filter panel should show tab-specific filters. Partners should support filters such as All, Beginner Friendly, Bouldering, Lead or Top Rope, Outdoor, Friends, and Pending. Circles should support All, Beginner Friendly, Recruiting Now, Outdoor, Joined, Full, Active Groups, Discover, and Featured. Search and filters should combine, but they do not need to persist to localStorage.
 
-Each **Partner Card** must include:
-- User avatar
-- Username
-- Grade / Climbing proficiency level
-- Location or distance
-- Short bio
-- Tags (e.g., `Bouldering`, `Lead`, `V4-V6`)
-- A friend status button on the right
+Use lucide-react icons, not letter placeholders. Build the UI with real DOM components, not screenshots as static pages. Reserve public/backgrounds/ for future circle background images.
 
-**Interaction Requirements**:
-1. Clicking the avatar or name area redirects to `/friend/:friendId`.
-2. For users not yet added as friends, the button displays an "Add Friend" icon.
-3. Clicking "Add Friend" should not send the request immediately; instead, it should expand a brief **Friend Request Input Area**.
-4. Users can edit the request message (e.g., *"Hey Marcus, want to connect for a climb sometime?"*).
-5. Upon clicking "Send," the request is written to `rockbond_friendRequests` with a status of `pending`.
-6. For sent requests, the button shows a "Pending" state and prevents duplicate sends.
-7. Once the recipient accepts, the status changes to "Friend."
-8. Once they are friends, the button changes to a "Chat" icon, which redirects to `/chat/:friendId`.
-9. **Note**: Do not display "Community Events" at the bottom of the Partners page; event discovery is strictly for the Explore page.
-
-## Friend Request Data Requirements
-
-Use `localStorage` to simulate the friend request workflow:
-- `rockbond_friendRequests`
-- `rockbond_friends`
-- `rockbond_chats`
-
-**Suggested fields for Friend Requests**:
-`id`, `fromName`, `toFriendId`, `toName`, `message`, `status` (`pending` / `accepted` / `rejected`), `createdAt`.
-
-The **Notifications** page must display pending requests and provide:
-- **Accept**: Update status to `accepted`, write to `rockbond_friends`, and initialize chat data.
-- **Reject**: Update status to `rejected`, do not write to friends, and remove the request from the pending notifications list.
-
-## Circles Functional Requirements
-
-The Circles page must replicate the layout from the Figma `circles discover.png`, focusing on visual structure and real state interaction.
-
-**Content Sections**:
-1. **My Active Groups**:
-    - Display a `3 Groups` pill to the right of the title.
-    - Show active group cards (e.g., `Peak Seekers`, `Crag Collective`).
-2. **Discover New Circles**:
-    - Large background image cards (e.g., `Alpine Pioneers`).
-    - Overlay info with glassmorphism effects, member counts, tags, `Recruiting Now` status, and a `Join` button.
-    - List items below (e.g., `Gear Nerds Anonymous`, `Indoor Technicians`) with a plus/joined toggle button.
-3. **Featured Circles**:
-    - Horizontal rounded cards (e.g., `Power Dyno`).
-    - Display overlapping avatar stacks, member counts, and a `See all` link.
-4. **Create Circle Entry**:
-    - A light green dashed-border card at the bottom of the page.
-    - Copy: *"Don't see your tribe?"*
-    - A circular "Plus" button.
-
-## Circles Interaction
-
-- Join / Plus buttons must persist the "Joined" state in `localStorage`.
-- You may reuse `rockbond_joinedChallenges` or an equivalent "Joined Circle" state.
-- Once joined, the button should show a "Joined" or "Checked" state.
-- States must persist after a page refresh.
-- The full "Create Circle" flow is not required for this phase; the card serves as a placeholder entry point.
-
-## UI Requirements
-
-- **Strictly Mobile-First**.
-- **Visual Style**: Light green background, white rounded cards, dark green primary buttons, soft shadows, circular avatars, and linear icons.
-- **Iconography**: Use `lucide-react` icons; no letter placeholders.
-- **Implementation**: Build with real DOM components; do not use screenshots as static pages.
-- **Assets**: Reserve a `public/backgrounds/` directory for future circle background images.
-
-## Acceptance Criteria
-
-1. Opening `/community` defaults to the Partners tab.
-2. "Community Events" do not appear on the Partners page.
-3. Clicking a partner's avatar/name redirects to `/friend/:friendId`.
-4. Clicking "Add Friend" expands the request message editor.
-5. Sending a request sets status to `pending` and persists it in `localStorage`.
-6. Notifications correctly display pending requests with Accept/Reject options.
-7. Accepting a request changes the partner's button to "Chat" in the Community list.
-8. Rejecting a request removes it from notifications and does not establish a friendship.
-9. Clicking the "Chat" button redirects to `/chat/:friendId`.
-10. The Circles page layout matches the Figma `circles discover.png`.
-11. Circle "Join" states are preserved after a page refresh.
-12. Bottom navigation functions correctly with the active state for Community.
-13. `npm run build` completes successfully.
+After implementation, verify that /community defaults to Partners, partner profile links work, friend request editing works, Accept and Reject work in Notifications, Chat opens only for friends, the Circles page matches Figma, circle joined state persists after refresh, the bottom navigation works, and npm run build completes successfully.

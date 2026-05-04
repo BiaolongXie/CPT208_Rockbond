@@ -1,68 +1,15 @@
-# Home Module Implementation Prompt
+Please complete the Home module for the RockBond Web App based on the Figma design and the requirements document.
 
-Based on the Figma design and requirements document, complete the Home module for the RockBond Web App.
+The Home page should be the main dashboard after the user enters the app. It should work as the central hub for current climbing status, recent records, active quest progress, and quick access points. The layout must be mobile-first and visually close to the Figma Home Dashboard, using RockBond's dark green brand color, light background, rounded cards, clear hierarchy, and the bottom navigation bar.
 
-## Goal
+Users should enter Home after completing onboarding. If a user profile already exists in localStorage, the app should go directly to Home when opened. Home should display the username or welcome message, current level or rank, active quest, recent ascents, and basic stats such as routes, projects, and progress.
 
-The Home page serves as the primary dashboard once a user enters the app. It acts as the central hub for viewing current climbing status, recent records, task progress, and quick access points. The page must be **mobile-first**, with a visual style closely aligned with the Figma Home Dashboard: dark green brand colors, light background, rounded cards, clear information hierarchy, and a bottom navigation bar.
+The Active Quest card must be clickable and should redirect to /progress. The Recent Ascents section should not read from sessions. It should show the most recent climbing log or project from rockbond_logs. The center plus button in the bottom navigation should go to /log-session, but this page is for Quick Log and logging climbs or projects, not for creating general sessions.
 
-## Functional Requirements
+Progress, total routes, saved projects, and recent improvement should be calculated mainly from rockbond_logs. Home should read from rockbond_userProfile, rockbond_logs, rockbond_questProgress, and rockbond_badges. rockbond_logs represents personal climbing logs or projects, while rockbond_sessions represents temporary activities in the Explore module and should not be used as the source for Recent Ascents.
 
-1. **Access Control**: Users enter the Home page after completing the initial Onboarding.
-2. **Persistence**: If a user profile already exists in `localStorage`, the app should direct the user straight to the Home page upon opening.
-3. **Status Display**: The Home page must display basic user status, including:
-    - Username or a welcome message.
-    - Current level/rank.
-    - Active Quest (Current active task).
-    - Recent Ascents (Most recent climbing records).
-    - Basic stats (e.g., routes, projects, progress, etc.).
-4. **Active Quest Interaction**: The Active Quest card must be clickable, redirecting the user to `/progress` (Climbing Progress page).
-5. **Recent Ascents Logic**: This section should no longer read from "sessions." Instead, it must fetch the most recent climbing log or project from `rockbond_logs`.
-6. **Quick Log Entry**: Accessible via the plus (+) button in the center of the bottom nav, redirecting to `/log-session`. Note: This page is for logging specific climbs/projects, not creating general sessions.
-7. **Data Calculation**: Displays for progress, routes, saved projects, and recent improvements should be calculated primarily based on `rockbond_logs`.
-8. **Authenticity**: Maintain real interaction and data persistence; do not use static mockups.
+If no logs exist, show a friendly empty state that guides the user to Quick Log. The notification bell in the header should link to /notifications. The bottom navigation must remain functional, with Home shown as active.
 
-## Data Requirements
+Please use lucide-react icons instead of letter placeholders. Build the UI with real React components and DOM elements, not static screenshots. Make sure the layout is responsive on mobile widths, does not overflow or clip, and that user profile, logs, quest progress, and badge state persist after refresh.
 
-Use `localStorage` for data persistence. The Home page primarily reads from:
-
-- `rockbond_userProfile`
-- `rockbond_logs`
-- `rockbond_questProgress`
-- `rockbond_badges`
-
-**Note:**
-- `rockbond_logs` represents individual user climbing logs/projects.
-- `rockbond_sessions` represents temporary activities/sessions in the Explore module and should **not** be used as the data source for Recent Ascents.
-- If no logs exist, display a friendly **empty state** to guide the user to "Quick Log."
-
-## Page Interaction
-
-- **Active Quest Card**: Click to jump to `/progress`.
-- **Quick Log / Center Plus Button**: Click to jump to `/log-session`.
-- **Header Notification Bell**: Click to jump to `/notifications`.
-- **Bottom Navigation**: Must remain functional with the "Home" tab in an active state.
-- **State Consistency**: User profile, recent logs, task progress, and badge status must persist after a page refresh.
-
-## UI Requirements
-
-- **Strictly Mobile-First**: The layout must be optimized for mobile screens with a centered max-width container for the main content.
-- **Visual Structure** (Refer to Figma Home Dashboard):
-    - Top brand/user info area.
-    - Card-style Active Quest.
-    - Recent Ascents block.
-    - Statistics cards grid.
-    - Bottom navigation bar.
-- **Iconography**: Use `lucide-react` icons; do not use letter placeholders.
-- **Implementation**: Must be built with real DOM components; do not use screenshots as static backgrounds.
-
-## Acceptance Criteria
-
-1. Users can successfully enter Home after finishing Onboarding.
-2. User profile is retained after refreshing, and the app directs straight to Home.
-3. After adding a new "Quick Log," the "Recent Ascents" on the Home page updates to show the latest entry.
-4. The Active Quest card correctly redirects to `/progress`.
-5. The Header notification button correctly redirects to `/notifications`.
-6. The Home tab in the bottom navigation reflects the correct active state.
-7. The page layout is responsive and free of overflow or clipping on mobile widths.
-8. `npm run build` completes successfully.
+After implementation, run npm run build and make sure it completes successfully.

@@ -1,37 +1,11 @@
-# Initial Development Prompt
-
 You are building RockBond, a CPT208 Human-Centric Computing mobile-first web app.
 
-Materials:
-1. Figma design file:
-https://www.figma.com/design/0wOzYMCUsYQfgMTXvZ2kTs/Untitled?node-id=2-2243&t=asrlQT5QGd0Xajq9-1
+Please use the Figma design file as the UI template and use docs/RockBond_Development_Requirements.md as the source of truth for functionality. The Figma design file is https://www.figma.com/design/0wOzYMCUsYQfgMTXvZ2kTs/Untitled?node-id=2-2243&t=asrlQT5QGd0Xajq9-1, and the exported Figma screenshots are stored in figma_photo/.
 
-2. Requirements document:
-docs/RockBond_Development_Requirements.md
+Please implement the system using React + Vite, Tailwind CSS, React Router, localStorage, and make it suitable for deployment on Vercel or GitHub Pages.
 
-3. Exported Figma screenshots:
-figma_photo/ 
+Do not build a static mockup. The app needs working navigation, session logging, quest progress updates, partner invitation join/save behavior, badge unlocking, and persistent user data through localStorage. Keep the design mobile-first and close to the Figma layout.
 
-Instruction:
-Use the Figma file as the UI template and use the requirements document as the source of truth for functionality.
+Please also create README.md and an ai-logs folder to save the main prompts used during development.
 
-Implement the system using:
-- React + Vite
-- Tailwind CSS
-- React Router
-- localStorage
-- Vercel or GitHub Pages deployment
-
-Important:
-- Do not build a static mockup.
-- Implement working navigation.
-- Implement session logging.
-- Implement quest progress updates.
-- Implement partner invitation join/save behavior.
-- Implement badge unlocking.
-- Persist user data with localStorage.
-- Keep the design mobile-first and close to the Figma layout.
-- Create README.md.
-- Create /ai-logs and save the main prompts used.
-
-Before coding, inspect the Figma design and requirements document, then produce a short implementation plan.
+Before coding, inspect the Figma design and the requirements document first, then produce a short implementation plan.
