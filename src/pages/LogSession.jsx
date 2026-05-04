@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import Header from "../components/Header.jsx";
 import { syncLogBadges } from "../utils/badges.js";
 import { getLogs, saveLogs } from "../utils/storage.js";
 
 const today = new Date().toISOString().slice(0, 10);
+const climbingTypes = ["Bouldering", "Top rope", "Lead climbing", "Mixed"];
+const difficultyGrades = ["V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8"];
 
 export default function LogSession() {
   const navigate = useNavigate();
@@ -14,16 +17,15 @@ export default function LogSession() {
     location: "Campus Climbing Gym",
     climbingType: "Bouldering",
     routesCompleted: 6,
-    difficultyLevel: "Beginner",
+    difficultyLevel: "V3",
     notes: "",
-    isProject: false,
   });
 
   function updateField(event) {
-    const { name, value, type, checked } = event.target;
+    const { name, value } = event.target;
     setForm((current) => ({
       ...current,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   }
 
@@ -39,6 +41,7 @@ export default function LogSession() {
       id: `log_${Date.now()}`,
       location: form.location.trim(),
       routesCompleted: Number(form.routesCompleted),
+      isProject: false,
       createdAt: new Date().toISOString(),
     };
     const logs = [log, ...getLogs()];
@@ -61,52 +64,33 @@ export default function LogSession() {
 
         <label className="block">
           <span className="text-sm font-bold">Date</span>
-          <input className="mt-2 w-full rounded-3xl border-0 bg-white px-5 py-4 shadow-soft outline-rock-green" type="date" name="date" value={form.date} onChange={updateField} />
+          <DatePicker value={form.date} onChange={(value) => updateSelectField("date", value)} />
         </label>
 
         <label className="block">
           <span className="text-sm font-bold">Location or gym</span>
-          <input className="mt-2 w-full rounded-3xl border-0 bg-white px-5 py-4 shadow-soft outline-rock-green" name="location" value={form.location} onChange={updateField} />
+          <input className="mt-2 h-[58px] w-full rounded-3xl border-0 bg-white px-5 shadow-soft outline-rock-green" name="location" value={form.location} onChange={updateField} />
         </label>
 
         <label className="block">
           <span className="text-sm font-bold">Climbing type</span>
-          <select className="mt-2 w-full rounded-3xl border-0 bg-white px-5 py-4 shadow-soft outline-rock-green" name="climbingType" value={form.climbingType} onChange={updateField}>
-            <option>Bouldering</option>
-            <option>Top rope</option>
-            <option>Lead climbing</option>
-            <option>Mixed</option>
-          </select>
+          <CustomSelect value={form.climbingType} options={climbingTypes} onChange={(value) => updateSelectField("climbingType", value)} />
         </label>
 
         <div className="grid grid-cols-2 gap-4">
           <label className="block">
             <span className="text-sm font-bold">Routes completed</span>
-            <input className="mt-2 w-full rounded-3xl border-0 bg-white px-5 py-4 shadow-soft outline-rock-green" min="1" type="number" name="routesCompleted" value={form.routesCompleted} onChange={updateField} />
+            <input className="mt-2 h-[58px] w-full rounded-3xl border-0 bg-white px-5 shadow-soft outline-rock-green" min="1" type="number" name="routesCompleted" value={form.routesCompleted} onChange={updateField} />
           </label>
           <label className="block">
             <span className="text-sm font-bold">Difficulty</span>
-            <select className="mt-2 w-full rounded-3xl border-0 bg-white px-5 py-4 shadow-soft outline-rock-green" name="difficultyLevel" value={form.difficultyLevel} onChange={updateField}>
-              <option>Beginner</option>
-              <option>Intermediate</option>
-              <option>Advanced</option>
-              <option>V4+</option>
-              <option>V6+</option>
-            </select>
+            <CustomSelect value={form.difficultyLevel} options={difficultyGrades} onChange={(value) => updateSelectField("difficultyLevel", value)} compact />
           </label>
         </div>
 
         <label className="block">
           <span className="text-sm font-bold">Log notes</span>
           <textarea className="mt-2 min-h-28 w-full resize-none rounded-3xl border-0 bg-white px-5 py-4 shadow-soft outline-rock-green" name="notes" value={form.notes} onChange={updateField} placeholder="What felt good? What route should you return to?" />
-        </label>
-
-        <label className="flex items-center justify-between rounded-3xl bg-white px-5 py-4 shadow-soft">
-          <span>
-            <span className="block font-black">Mark as project</span>
-            <span className="text-sm text-zinc-600">Mark a route to revisit later.</span>
-          </span>
-          <input className="h-6 w-6 accent-rock-green" type="checkbox" name="isProject" checked={form.isProject} onChange={updateField} />
         </label>
 
         <div className="flex gap-3 pt-2">
@@ -120,4 +104,172 @@ export default function LogSession() {
       </form>
     </>
   );
+
+  function updateSelectField(name, value) {
+    setForm((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  }
+}
+
+function CustomSelect({ value, options, onChange, compact = false }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative mt-2">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        className="flex h-[58px] w-full items-center justify-between rounded-[28px] bg-white px-5 text-left text-base font-black text-rock-ink shadow-soft ring-1 ring-transparent transition focus:outline-none focus:ring-rock-green"
+      >
+        <span>{value}</span>
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rock-mist text-rock-green">
+          <ChevronDown aria-hidden className={`transition ${open ? "rotate-180" : ""}`} size={19} strokeWidth={2.6} />
+        </span>
+      </button>
+
+      {open && (
+        <div className={`absolute left-0 right-0 top-[calc(100%+0.5rem)] z-40 overflow-hidden rounded-[28px] bg-white p-2 shadow-lift ring-1 ring-rock-mint ${compact ? "grid grid-cols-3 gap-1" : "space-y-1"}`}>
+          {options.map((option) => {
+            const selected = option === value;
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => {
+                  onChange(option);
+                  setOpen(false);
+                }}
+                className={`flex min-h-11 items-center justify-between rounded-[22px] px-4 text-left text-sm font-black transition ${
+                  selected ? "bg-rock-green text-white" : "text-rock-ink hover:bg-rock-mist"
+                }`}
+              >
+                <span>{option}</span>
+                {selected && <Check aria-hidden size={17} strokeWidth={2.7} />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DatePicker({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const baseDate = new Date(`${value}T00:00:00`);
+  const safeDate = Number.isNaN(baseDate.getTime()) ? new Date() : baseDate;
+  const [viewDate, setViewDate] = useState(new Date(safeDate));
+  const days = buildDateChoices(viewDate);
+
+  function shiftMonth(amount) {
+    setViewDate((current) => new Date(current.getFullYear(), current.getMonth() + amount, 1));
+  }
+
+  return (
+    <div className="relative mt-2">
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="flex h-[58px] w-full items-center justify-between rounded-3xl bg-white px-5 text-left text-base font-black text-rock-ink shadow-soft ring-1 ring-transparent transition focus:outline-none focus:ring-rock-green"
+      >
+        <span>{formatDisplayDate(value)}</span>
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rock-mist text-rock-green">
+          <CalendarDays aria-hidden size={18} strokeWidth={2.5} />
+        </span>
+      </button>
+
+      {open && (
+        <section className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 rounded-[30px] bg-white p-4 shadow-lift ring-1 ring-rock-mint">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-rock-moss">Choose date</p>
+              <h2 className="mt-1 text-lg font-black text-rock-green">{viewDate.toLocaleDateString(undefined, { month: "long", year: "numeric" })}</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <button type="button" aria-label="Previous month" onClick={() => shiftMonth(-1)} className="flex h-9 w-9 items-center justify-center rounded-full bg-rock-mist text-rock-green">
+                <ChevronLeft aria-hidden size={19} strokeWidth={2.6} />
+              </button>
+              <button type="button" aria-label="Next month" onClick={() => shiftMonth(1)} className="flex h-9 w-9 items-center justify-center rounded-full bg-rock-mist text-rock-green">
+                <ChevronRight aria-hidden size={19} strokeWidth={2.6} />
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-7 gap-1 text-center text-xs font-black text-zinc-500">
+            {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (
+              <span key={`${day}-${index}`} className="py-2">
+                {day}
+              </span>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-7 gap-1">
+            {days.map((day) => {
+              const selected = day.value === value;
+              return (
+                <button
+                  key={day.value}
+                  type="button"
+                  onClick={() => {
+                    onChange(day.value);
+                    setOpen(false);
+                  }}
+                  className={`flex h-10 items-center justify-center rounded-full text-sm font-black transition ${
+                    selected ? "bg-rock-green text-white shadow" : day.inMonth ? "text-rock-ink hover:bg-rock-mist" : "text-zinc-400 hover:bg-rock-mist"
+                  }`}
+                >
+                  {day.label}
+                </button>
+              );
+            })}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              const todayDate = new Date(`${today}T00:00:00`);
+              setViewDate(todayDate);
+              onChange(today);
+              setOpen(false);
+            }}
+            className="mt-4 h-11 w-full rounded-full bg-rock-mist text-sm font-black text-rock-green"
+          >
+            Today
+          </button>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function buildDateChoices(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const start = new Date(firstDay);
+  start.setDate(firstDay.getDate() - firstDay.getDay());
+
+  return Array.from({ length: 35 }, (_, index) => {
+    const item = new Date(start);
+    item.setDate(start.getDate() + index);
+    return {
+      label: item.getDate(),
+      value: toDateInputValue(item),
+      inMonth: item.getMonth() === month,
+    };
+  });
+}
+
+function formatDisplayDate(value) {
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString(undefined, { year: "numeric", month: "2-digit", day: "2-digit" });
+}
+
+function toDateInputValue(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }

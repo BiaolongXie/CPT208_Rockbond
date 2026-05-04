@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowLeft, Info, MapPin, Mic, Phone, Plus, Send, Video } from "lucide-react";
+import { ArrowLeft, Info, MapPin, Mic, Phone, Send, Video } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { buildFriendProfile, seedChatMessages } from "../data/mockData.js";
 import { getChats, saveChats } from "../utils/storage.js";
@@ -72,9 +72,6 @@ export default function ActiveChat() {
           </button>
         </div>
         <div className="flex h-16 items-center gap-3 rounded-full bg-white px-4 shadow-soft">
-          <button type="button" aria-label="Attach" className="flex h-11 w-11 items-center justify-center rounded-full bg-rock-mist text-rock-green">
-            <Plus aria-hidden size={23} />
-          </button>
           <input value={text} onChange={(event) => setText(event.target.value)} className="min-w-0 flex-1 bg-transparent outline-none" placeholder="Type a message..." />
           <button type="button" aria-label="Send message" onClick={() => sendMessage()} className="flex h-12 w-12 items-center justify-center rounded-full bg-rock-green text-white shadow-lift">
             {text.trim() ? <Send aria-hidden size={21} /> : <Mic aria-hidden size={22} />}

@@ -3,6 +3,7 @@ import { ArrowLeft, Clock3, MoreHorizontal, Plus, Send, TrendingUp } from "lucid
 import { useNavigate, useParams } from "react-router-dom";
 import BadgePill from "../components/BadgePill.jsx";
 import BottomNav from "../components/BottomNav.jsx";
+import ShareActionSheet from "../components/ShareActionSheet.jsx";
 import { findSeedSession } from "../data/sessionData.js";
 import { getSessions, saveSessions } from "../utils/storage.js";
 
@@ -13,6 +14,7 @@ export default function SessionDetails() {
   const initialSession = useMemo(() => storedSessions.find((item) => item.id === sessionId) || findSeedSession(sessionId), [sessionId]);
   const [session, setSession] = useState(initialSession);
   const [comment, setComment] = useState("");
+  const [shareOpen, setShareOpen] = useState(false);
 
   function persist(nextSession) {
     setSession(nextSession);
@@ -53,7 +55,7 @@ export default function SessionDetails() {
           <ArrowLeft aria-hidden size={24} strokeWidth={2.4} />
         </button>
         <h1 className="text-lg font-black text-rock-green">Session Details</h1>
-        <button type="button" aria-label="More session actions" className="flex h-10 w-10 items-center justify-center rounded-full text-rock-green">
+        <button type="button" aria-label="More session actions" onClick={() => setShareOpen(true)} className="flex h-10 w-10 items-center justify-center rounded-full text-rock-green">
           <MoreHorizontal aria-hidden size={24} strokeWidth={2.4} />
         </button>
       </header>
@@ -129,6 +131,7 @@ export default function SessionDetails() {
           </div>
         </section>
       </main>
+      <ShareActionSheet open={shareOpen} onClose={() => setShareOpen(false)} title="Share Session" />
       <BottomNav />
     </>
   );

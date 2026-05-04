@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { ArrowLeft, Compass, Map, MessageSquare, Pin, Search, SmilePlus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowLeft, Compass, Map, MessageSquare, Pin, SmilePlus } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import BadgePill from "../components/BadgePill.jsx";
 import BottomNav from "../components/BottomNav.jsx";
@@ -10,8 +10,10 @@ export default function CircleDetails() {
   const navigate = useNavigate();
   const { circleId } = useParams();
   const circle = useMemo(() => findCircleById(circleId), [circleId]);
+  const [showAllMembers, setShowAllMembers] = useState(false);
   const joined = circle.section === "active" || getJoinedChallenges().some((item) => item.id === circle.id);
   const pending = getCircleApplications().some((item) => item.circleId === circle.id && item.status === "pending");
+  const members = showAllMembers ? buildAllMembers() : circleMembers;
 
   return (
     <>
@@ -20,7 +22,6 @@ export default function CircleDetails() {
           <ArrowLeft aria-hidden size={24} strokeWidth={2.4} />
         </button>
         <h1 className="mr-auto text-lg font-black text-rock-green">Circles</h1>
-        <Search aria-hidden className="text-rock-green" size={23} strokeWidth={2.4} />
         <div className="flex h-11 w-11 items-center justify-center rounded-full bg-rock-mint font-black text-rock-green">A</div>
       </header>
 
@@ -68,10 +69,12 @@ export default function CircleDetails() {
               <SmilePlus aria-hidden size={21} strokeWidth={2.4} />
               Circle Members
             </h3>
-            <button type="button" className="text-sm text-rock-moss">View All (48)</button>
+            <button type="button" onClick={() => setShowAllMembers((value) => !value)} className="text-sm text-rock-moss">
+              {showAllMembers ? "Show Less" : "View All (48)"}
+            </button>
           </div>
           <div className="grid grid-cols-4 gap-4 text-center">
-            {circleMembers.map((name) => (
+            {members.map((name) => (
               <div key={name}>
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[linear-gradient(135deg,#0d2818,#d7a24c)] text-lg font-black text-white ring-2 ring-rock-mint">
                   {name.slice(0, 1)}
@@ -79,7 +82,7 @@ export default function CircleDetails() {
                 <p className="mt-2 text-sm text-zinc-700">{name}</p>
               </div>
             ))}
-            <Link to={`/circle/${circle.id}/apply`} className="text-center">
+            <Link to={`/circle/${circle.id}/invite`} className="text-center">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-rock-stone text-2xl text-rock-stone">+</div>
               <p className="mt-2 text-sm text-zinc-700">Invite</p>
             </Link>
@@ -108,6 +111,24 @@ export default function CircleDetails() {
       <BottomNav />
     </>
   );
+}
+
+function buildAllMembers() {
+  return [
+    ...circleMembers,
+    "Nora",
+    "Evan",
+    "Priya",
+    "Leo",
+    "Maya",
+    "Owen",
+    "Tara",
+    "Kai",
+    "Riley",
+    "Sam",
+    "Iris",
+    "Noah",
+  ];
 }
 
 function ActivityItem({ Icon, title, detail }) {

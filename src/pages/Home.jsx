@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Clock3, Plus, TrendingUp } from "lucide-react";
+import { Clock3, TrendingUp } from "lucide-react";
 import BottomNav from "../components/BottomNav.jsx";
 import Header from "../components/Header.jsx";
 import QuestCard from "../components/QuestCard.jsx";
@@ -49,16 +49,9 @@ export default function Home() {
           <p className="mt-3 max-w-[210px] text-base leading-6 text-white/85">
             Castle Rock conditions are perfect today. 3 buddies are heading there.
           </p>
-          <div className="mt-5 flex items-center justify-between">
-            <Link to="/community" className="rounded-full bg-white px-5 py-3 text-sm font-black text-rock-green">
+          <div className="mt-5 flex items-center justify-end">
+            <Link to="/community" className="rounded-full bg-white px-5 py-3 text-sm font-black text-rock-green shadow-lift">
               Join Session
-            </Link>
-            <Link
-              to="/log-session"
-              aria-label="Add quick log"
-              className="flex h-16 w-16 items-center justify-center rounded-full bg-[#082111] text-white shadow-lift"
-            >
-              <Plus aria-hidden size={34} strokeWidth={2.7} />
             </Link>
           </div>
         </section>

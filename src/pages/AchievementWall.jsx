@@ -1,4 +1,4 @@
-import { ArrowLeft, CheckCircle2, LockKeyhole, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, CheckCircle2, LockKeyhole } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import BottomNav from "../components/BottomNav.jsx";
 import { mergeUnlockedBadges } from "../data/achievementData.js";
@@ -33,10 +33,6 @@ export default function AchievementWall() {
               {unlockedCount}
             </div>
           </div>
-          <button type="button" className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-full bg-rock-green text-base font-black text-white shadow-lift">
-            <SlidersHorizontal aria-hidden size={20} strokeWidth={2.5} />
-            Customise Wall
-          </button>
         </section>
 
         <section className="mt-8 grid grid-cols-2 gap-4">

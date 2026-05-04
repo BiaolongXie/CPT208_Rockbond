@@ -88,11 +88,8 @@ export default function Progress() {
         </section>
 
         <section className="mt-9">
-          <div className="mb-5 flex items-center justify-between">
+          <div className="mb-5">
             <h2 className="text-lg font-black text-rock-ink">Recent Activity</h2>
-            <button type="button" className="text-sm font-medium text-rock-moss">
-              View All
-            </button>
           </div>
           <div className="space-y-4">
             {activities.map((activity) => (

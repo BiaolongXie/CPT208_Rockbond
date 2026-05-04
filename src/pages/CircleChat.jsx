@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowLeft, Mic, Plus, Search, Send } from "lucide-react";
+import { ArrowLeft, Mic, Search, Send } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { findCircleById, seedCircleMessages } from "../data/circleData.js";
 import { getCircleChats, saveCircleChats } from "../utils/storage.js";
@@ -60,9 +60,6 @@ export default function CircleChat() {
 
       <section className="fixed bottom-0 left-1/2 w-full max-w-[430px] -translate-x-1/2 bg-rock-paper px-5 pb-6 pt-3">
         <div className="flex h-16 items-center gap-3 rounded-full bg-white px-3 shadow-soft">
-          <button type="button" aria-label="Attach" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-rock-mist text-rock-green">
-            <Plus aria-hidden size={24} strokeWidth={2.4} />
-          </button>
           <input
             value={text}
             onChange={(event) => setText(event.target.value)}

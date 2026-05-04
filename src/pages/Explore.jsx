@@ -172,11 +172,8 @@ export default function Explore() {
           </div>
 
           <section>
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4">
               <h1 className="text-lg font-black text-rock-ink">{activeTab === "Outdoor Crags" ? "Outdoor Crags" : activeTab === "Gyms" ? "Top Rated Gyms" : "Nearby Climbing Spots"}</h1>
-              <button type="button" className="text-sm font-bold text-rock-green">
-                View all
-              </button>
             </div>
 
             {filteredSpots.length > 0 ? (

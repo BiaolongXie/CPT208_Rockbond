@@ -25,7 +25,6 @@ import {
 const activeCircles = circles.filter((circle) => circle.section === "active");
 const discoverCircles = circles.filter((circle) => circle.section === "discover" && circle.id !== "challenge_alpine");
 const alpineCircle = circles.find((circle) => circle.id === "challenge_alpine");
-const featuredCircles = circles.filter((circle) => circle.section === "featured");
 
 const partnerFilters = [
   { id: "all", label: "All" },
@@ -46,7 +45,6 @@ const circleFilters = [
   { id: "full", label: "Full" },
   { id: "active", label: "Active Groups" },
   { id: "discover", label: "Discover" },
-  { id: "featured", label: "Featured" },
 ];
 
 export default function Community() {
@@ -78,9 +76,6 @@ export default function Community() {
   const showAlpineCircle = circleMatchesSearch(alpineCircle, query) && circleMatchesFilter(alpineCircle, circleFilter, joinedChallenges, "discover");
   const filteredDiscoverCircles = discoverCircles.filter((circle) =>
     circleMatchesSearch(circle, query) && circleMatchesFilter(circle, circleFilter, joinedChallenges, "discover")
-  );
-  const filteredFeaturedCircles = featuredCircles.filter((circle) =>
-    circleMatchesSearch(circle, query) && circleMatchesFilter(circle, circleFilter, joinedChallenges, "featured")
   );
 
   function openFriendRequest(invite) {
@@ -238,7 +233,6 @@ export default function Community() {
             activeCircles={filteredActiveCircles}
             showAlpineCircle={showAlpineCircle}
             discoverCircles={filteredDiscoverCircles}
-            featuredCircles={filteredFeaturedCircles}
             joinedChallenges={joinedChallenges}
             circleApplications={circleApplications}
             onApply={openCircleApply}
@@ -340,8 +334,8 @@ function PartnersList({
   );
 }
 
-function CirclesView({ activeCircles, showAlpineCircle, discoverCircles, featuredCircles, joinedChallenges, circleApplications, onApply, onChat }) {
-  const hasAnyCircle = activeCircles.length > 0 || showAlpineCircle || discoverCircles.length > 0 || featuredCircles.length > 0;
+function CirclesView({ activeCircles, showAlpineCircle, discoverCircles, joinedChallenges, circleApplications, onApply, onChat }) {
+  const hasAnyCircle = activeCircles.length > 0 || showAlpineCircle || discoverCircles.length > 0;
 
   if (!hasAnyCircle) {
     return <EmptyState title="No circles found" detail="Try a different keyword or clear the filter." />;
@@ -437,34 +431,14 @@ function CirclesView({ activeCircles, showAlpineCircle, discoverCircles, feature
       </section>
       )}
 
-      {featuredCircles.length > 0 && (
-      <section>
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-2xl font-black">Featured Circles</h2>
-          <button type="button" className="text-sm font-medium text-rock-moss">See all</button>
-        </div>
-        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none">
-          {featuredCircles.map((circle) => (
-            <FeaturedCircle
-              key={circle.id}
-              circle={circle}
-              joined={isCircleJoined(circle, joinedChallenges)}
-              pending={hasPendingCircleApplication(circleApplications, circle.id)}
-              onApply={onApply}
-            />
-          ))}
-        </div>
-      </section>
-      )}
-
       <section className="flex items-center justify-between rounded-[30px] border-2 border-dashed border-rock-mint bg-rock-mint/20 p-6">
         <div>
           <h2 className="text-base font-medium text-rock-green">Don't see your tribe?</h2>
           <p className="mt-1 max-w-[220px] text-sm leading-4 text-rock-moss">Start your own circle and invite fellow climbers.</p>
         </div>
-        <button type="button" className="flex h-12 w-12 items-center justify-center rounded-full bg-rock-green text-white shadow-lift">
+        <Link to="/create-circle" className="flex h-12 w-12 items-center justify-center rounded-full bg-rock-green text-white shadow-lift" aria-label="Create a circle">
           <Plus aria-hidden size={24} strokeWidth={2.6} />
-        </button>
+        </Link>
       </section>
     </section>
   );
@@ -522,38 +496,6 @@ function AvatarStack() {
       ))}
       <span className="flex h-6 w-7 items-center justify-center rounded-full bg-rock-mint text-[10px] font-black text-rock-green ring-2 ring-white">+25</span>
     </div>
-  );
-}
-
-function FeaturedCircle({ circle, joined, pending, onApply }) {
-  const Icon = circle.Icon;
-  return (
-    <article className="w-[170px] shrink-0 rounded-[30px] bg-rock-mist p-4">
-      <Link to={`/circle/${circle.id}`} className="flex h-12 w-12 items-center justify-center rounded-full bg-rock-green text-rock-mint" aria-label={`Open ${circle.title} details`}>
-        <Icon aria-hidden size={22} strokeWidth={2.4} />
-      </Link>
-      <Link to={`/circle/${circle.id}`} className="block">
-        <h3 className="mt-9 font-black leading-4">{circle.title}</h3>
-        <p className="text-xs text-zinc-700">{circle.members}</p>
-      </Link>
-      {circle?.tags?.includes("Beginner Friendly") && (
-        <div className="mt-2">
-          <BadgePill tone="mint">Beginner Friendly</BadgePill>
-        </div>
-      )}
-      <div className="mt-3 flex items-center justify-between gap-2">
-        <AvatarStack />
-        <button
-          type="button"
-          onClick={() => onApply(circle)}
-          disabled={joined || pending}
-          aria-label={joined ? `${circle.title} joined` : pending ? `${circle.title} application pending` : `Apply to ${circle.title}`}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-rock-moss shadow disabled:bg-rock-green disabled:text-white"
-        >
-          {joined ? <Check aria-hidden size={17} strokeWidth={2.7} /> : pending ? <Clock3 aria-hidden size={17} strokeWidth={2.5} /> : <Plus aria-hidden size={19} strokeWidth={2.5} />}
-        </button>
-      </div>
-    </article>
   );
 }
 
@@ -617,7 +559,6 @@ function circleMatchesFilter(circle, filter, joinedChallenges, section) {
   if (filter === "full") return values.includes("full");
   if (filter === "active") return section === "active";
   if (filter === "discover") return section === "discover";
-  if (filter === "featured") return section === "featured";
   return true;
 }
 

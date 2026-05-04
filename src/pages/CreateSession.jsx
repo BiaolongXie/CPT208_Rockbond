@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarDays, Check, Clock3, Globe2, Lock, MapPin, Send, UserPlus, X } from "lucide-react";
+import { CalendarDays, Check, Clock3, Globe2, Lock, MapPin, Send, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "../components/BottomNav.jsx";
 import { getSessions, saveSessions } from "../utils/storage.js";
@@ -13,6 +13,7 @@ export default function CreateSession() {
   const [grade, setGrade] = useState("V3");
   const [privacy, setPrivacy] = useState("Invite Only");
   const [notes, setNotes] = useState("");
+  const [selectedPartners, setSelectedPartners] = useState(["Liam W."]);
 
   function createSession() {
     const id = `session_${Date.now()}`;
@@ -27,7 +28,7 @@ export default function CreateSession() {
       level: grade === "V0" || grade === "V1" ? "Beginner" : "Intermediate",
       notes: notes.trim() || "Tell your partners about the route, gear needed, or meeting spot.",
       privacy,
-      participants: ["Alex P.", "Maya R.", "Liam W."],
+      participants: selectedPartners.length > 0 ? selectedPartners : ["Alex Chen"],
       joined: true,
       hosted: true,
       createdAt: new Date().toISOString(),
@@ -35,6 +36,10 @@ export default function CreateSession() {
     };
     saveSessions([newSession, ...getSessions()]);
     navigate(`/session/${id}`);
+  }
+
+  function togglePartner(name) {
+    setSelectedPartners((current) => (current.includes(name) ? current.filter((item) => item !== name) : [...current, name]));
   }
 
   return (
@@ -117,26 +122,22 @@ export default function CreateSession() {
 
         <div className="mt-7 flex items-center justify-between">
           <FormLabel>Invite Partners</FormLabel>
-          <button type="button" className="text-sm font-medium text-rock-moss">See All</button>
         </div>
         <div className="mt-4 flex gap-5 overflow-x-auto pb-2 scrollbar-none">
-          {partners.map((name, index) => (
-            <div key={name} className="text-center">
+          {partners.map((name) => {
+            const selected = selectedPartners.includes(name);
+            return (
+            <button key={name} type="button" onClick={() => togglePartner(name)} className="text-center">
               <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[linear-gradient(135deg,#0d2818,#d7a24c)] text-lg font-black text-white ring-2 ring-white">
                 {name.slice(0, 1)}
-                <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-rock-green text-white">
-                  {index === 2 ? <Check aria-hidden size={15} /> : "+"}
+                <span className={`absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full ${selected ? "bg-rock-green text-white" : "bg-white text-rock-stone shadow"}`}>
+                  {selected ? <Check aria-hidden size={15} /> : "+"}
                 </span>
               </div>
               <p className="mt-2 text-sm text-zinc-700">{name}</p>
-            </div>
-          ))}
-          <div className="text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border-2 border-dashed border-rock-stone text-rock-stone">
-              <UserPlus aria-hidden size={23} />
-            </div>
-            <p className="mt-2 text-sm text-zinc-700">Add Circle</p>
-          </div>
+            </button>
+            );
+          })}
         </div>
 
         <button type="button" onClick={createSession} className="mt-9 flex h-16 w-full items-center justify-center gap-3 rounded-full bg-rock-green text-lg font-medium text-white shadow-lift">

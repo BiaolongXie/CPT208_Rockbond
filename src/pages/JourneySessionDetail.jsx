@@ -1,12 +1,15 @@
 import { ArrowLeft, Clock3, Map, MapPin, NotebookText, Share2, Target, ThermometerSun } from "lucide-react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import BottomNav from "../components/BottomNav.jsx";
+import ShareActionSheet from "../components/ShareActionSheet.jsx";
 import { getLogs, getSessions } from "../utils/storage.js";
 
 export default function JourneySessionDetail() {
   const navigate = useNavigate();
   const { entryType, entryId } = useParams();
   const detail = buildJourneyDetail(entryType, entryId);
+  const [shareOpen, setShareOpen] = useState(false);
 
   return (
     <>
@@ -15,7 +18,7 @@ export default function JourneySessionDetail() {
           <ArrowLeft aria-hidden size={24} strokeWidth={2.4} />
         </button>
         <h1 className="text-lg font-black text-rock-green">Session Detail</h1>
-        <button type="button" aria-label="Share journey entry" className="flex h-10 w-10 items-center justify-center rounded-full text-rock-green">
+        <button type="button" aria-label="Share journey entry" onClick={() => setShareOpen(true)} className="flex h-10 w-10 items-center justify-center rounded-full text-rock-green">
           <Share2 aria-hidden size={21} strokeWidth={2.4} />
         </button>
       </header>
@@ -80,6 +83,7 @@ export default function JourneySessionDetail() {
           </div>
         </section>
       </main>
+      <ShareActionSheet open={shareOpen} onClose={() => setShareOpen(false)} title="Share Journey" />
       <BottomNav />
     </>
   );

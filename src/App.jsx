@@ -5,7 +5,9 @@ import BadgeDetails from "./pages/BadgeDetails.jsx";
 import CircleApply from "./pages/CircleApply.jsx";
 import CircleChat from "./pages/CircleChat.jsx";
 import CircleDetails from "./pages/CircleDetails.jsx";
+import CircleInvite from "./pages/CircleInvite.jsx";
 import Community from "./pages/Community.jsx";
+import CreateCircle from "./pages/CreateCircle.jsx";
 import CreateSession from "./pages/CreateSession.jsx";
 import Explore from "./pages/Explore.jsx";
 import FriendProfile from "./pages/FriendProfile.jsx";
@@ -44,7 +46,9 @@ export default function App() {
         <Route path="/chat/:friendId" element={<ActiveChat />} />
         <Route path="/circle/:circleId" element={<CircleDetails />} />
         <Route path="/circle/:circleId/apply" element={<CircleApply />} />
+        <Route path="/circle/:circleId/invite" element={<CircleInvite />} />
         <Route path="/circle/:circleId/chat" element={<CircleChat />} />
+        <Route path="/create-circle" element={<CreateCircle />} />
         <Route path="/create-session" element={<CreateSession />} />
         <Route path="/session/:sessionId" element={<SessionDetails />} />
         <Route path="/explore" element={<Explore />} />
