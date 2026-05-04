@@ -1,0 +1,351 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #06170d;
+  background: #d9ddd6;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(207, 234, 201, 0.65), transparent 34rem),
+    linear-gradient(180deg, #eef1ec 0%, #dfe4dc 100%);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.terrain-map {
+  background:
+    linear-gradient(180deg, rgba(13, 40, 24, 0.12), rgba(13, 40, 24, 0.18)),
+    url("/backgrounds/explore-map.jpg"),
+    linear-gradient(135deg, #10281a 0%, #4f734c 42%, #a7c58b 66%, #1c3523 100%);
+  background-position: center;
+  background-size: cover;
+  filter: saturate(1.05) contrast(1.08);
+}
+
+.gym-wall {
+  background:
+    url("/backgrounds/gym-card.jpg"),
+    linear-gradient(180deg, #d9ddd6 0%, #f4f6ef 42%, #e9ece5 43%, #d8ddd4 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.spot-summit-vault {
+  background:
+    linear-gradient(180deg, rgba(13, 40, 24, 0.04), rgba(13, 40, 24, 0.2)),
+    url("/backgrounds/spot-summit-vault.jpg"),
+    linear-gradient(135deg, #26352d 0%, #d8ddd4 48%, #87927f 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.spot-peak-fitness {
+  background:
+    linear-gradient(180deg, rgba(13, 40, 24, 0.04), rgba(13, 40, 24, 0.2)),
+    url("/backgrounds/spot-peak-fitness.jpg"),
+    linear-gradient(135deg, #0d2818 0%, #9ab49a 48%, #e7eadf 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.spot-stone-grove {
+  background:
+    linear-gradient(180deg, rgba(13, 40, 24, 0.02), rgba(13, 40, 24, 0.24)),
+    url("/backgrounds/spot-stone-grove.jpg"),
+    linear-gradient(135deg, #233124 0%, #b89a63 42%, #627f58 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.spot-campus-gym {
+  background:
+    linear-gradient(180deg, rgba(13, 40, 24, 0.04), rgba(13, 40, 24, 0.2)),
+    url("/backgrounds/spot-campus-gym.jpg"),
+    linear-gradient(135deg, #304237 0%, #eef1ec 48%, #c58d4a 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.spot-castle-rock {
+  background:
+    linear-gradient(180deg, rgba(13, 40, 24, 0.02), rgba(13, 40, 24, 0.26)),
+    url("/backgrounds/spot-castle-rock.jpg"),
+    linear-gradient(135deg, #53633f 0%, #d2a76d 42%, #132f1e 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.event-thumb {
+  background:
+    linear-gradient(135deg, rgba(23, 48, 33, 0.18), rgba(131, 151, 127, 0.18)),
+    url("/backgrounds/event-yoga.jpg"),
+    linear-gradient(135deg, #173021, #83977f);
+  background-position: center;
+  background-size: cover;
+}
+
+.event-thumb-1 {
+  background:
+    linear-gradient(135deg, rgba(13, 40, 24, 0.18), rgba(209, 155, 74, 0.18)),
+    url("/backgrounds/event-social.jpg"),
+    linear-gradient(135deg, #0d2818, #d19b4a);
+  background-position: center;
+  background-size: cover;
+}
+
+.mountain-quote-card {
+  min-height: 194px;
+  background:
+    linear-gradient(180deg, transparent 0 40%, rgba(6, 23, 13, 0.62) 100%),
+    url("/backgrounds/progress-quote.jpg"),
+    linear-gradient(180deg, #7bc2e4 0%, #9fd0dd 44%, #355545 45%, #173021 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.mountain-help-hero {
+  min-height: 192px;
+  background:
+    linear-gradient(180deg, rgba(13, 40, 24, 0.2) 0%, rgba(13, 40, 24, 0.86) 100%),
+    url("/backgrounds/rank-help-hero.jpg"),
+    linear-gradient(180deg, #58765f 0%, #36563f 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.friend-route-image {
+  background:
+    url("/backgrounds/friend-route.jpg"),
+    linear-gradient(90deg, #f2a31d 0 50%, #d78a15 50% 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.chat-route-image {
+  background:
+    url("/backgrounds/chat-route.jpg"),
+    radial-gradient(circle at 20% 22%, #8fb8c2 0 4px, transparent 5px),
+    radial-gradient(circle at 72% 34%, #f5774d 0 5px, transparent 6px),
+    radial-gradient(circle at 48% 60%, #c8c8c8 0 4px, transparent 5px),
+    linear-gradient(112deg, transparent 0 28%, #6b9b35 29% 45%, transparent 46%),
+    linear-gradient(135deg, #0d4b46 0%, #113d31 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.circle-hero {
+  background:
+    linear-gradient(180deg, rgba(13, 40, 24, 0.04) 0%, rgba(13, 40, 24, 0.18) 100%),
+    url("/backgrounds/circle-alpine.jpg"),
+    linear-gradient(135deg, #4c704f 0%, #d2a76d 48%, #10281a 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.circle-thumb {
+  background:
+    url("/backgrounds/circle-gear.jpg"),
+    linear-gradient(135deg, #10281a, #d2a76d);
+  background-position: center;
+  background-size: cover;
+}
+
+.circle-thumb-1 {
+  background:
+    url("/backgrounds/circle-indoor.jpg"),
+    linear-gradient(135deg, #26332f, #e0d6b4);
+  background-position: center;
+  background-size: cover;
+}
+
+.circle-detail-hero {
+  background:
+    linear-gradient(180deg, rgba(8, 24, 15, 0.04) 0%, rgba(8, 24, 15, 0.16) 45%, rgba(8, 24, 15, 0.78) 100%),
+    url("/backgrounds/circle-details.jpg"),
+    linear-gradient(160deg, #93b6c5 0%, #d7a25f 42%, #314e38 43%, #07140c 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.circle-chat-route {
+  background:
+    url("/backgrounds/circle-chat-route.jpg"),
+    radial-gradient(circle at 34% 34%, #8db342 0 8px, transparent 9px),
+    radial-gradient(circle at 62% 50%, #d4dc7f 0 6px, transparent 7px),
+    linear-gradient(148deg, transparent 0 28%, #8db342 29% 38%, transparent 39%),
+    linear-gradient(135deg, #1e241e, #353a2d);
+  background-position: center;
+  background-size: cover;
+}
+
+.session-location-map {
+  background:
+    linear-gradient(180deg, rgba(13, 40, 24, 0.04), rgba(13, 40, 24, 0.16)),
+    url("/backgrounds/session-location-map.jpg"),
+    radial-gradient(circle at 24% 24%, #b4c984 0 28px, transparent 29px),
+    radial-gradient(circle at 72% 34%, #8da06f 0 22px, transparent 23px),
+    repeating-linear-gradient(160deg, #10281a 0 9px, #173f2a 10px 18px, #d2a76d 19px 21px);
+  background-position: center;
+  background-size: cover;
+}
+
+.session-hero {
+  background:
+    linear-gradient(180deg, rgba(8, 24, 15, 0.02) 0%, rgba(8, 24, 15, 0.12) 45%, rgba(8, 24, 15, 0.72) 100%),
+    url("/backgrounds/session-hero.jpg"),
+    linear-gradient(135deg, #cf9a55 0%, #775439 38%, #dfe8e1 39%, #496b4d 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.profile-journey-trad {
+  background:
+    url("/backgrounds/profile-journey-trad.jpg"),
+    linear-gradient(135deg, #eef1ec 0%, #ffffff 45%, #b9c6b8 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.profile-journey-gym {
+  background:
+    url("/backgrounds/profile-journey-gym.jpg"),
+    linear-gradient(135deg, #0d2818 0%, #d2a76d 52%, #f0ead7 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.profile-journey-alpine {
+  background:
+    url("/backgrounds/profile-journey-alpine.jpg"),
+    linear-gradient(135deg, #113d31 0%, #d7a24c 45%, #1e3440 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.badge-peak-master {
+  background:
+    linear-gradient(180deg, rgba(8, 24, 15, 0.04), rgba(8, 24, 15, 0.24)),
+    url("/backgrounds/badge-peak-master.jpg"),
+    linear-gradient(145deg, #8fc4d6 0%, #f5f2df 42%, #315a46 43%, #07140c 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.badge-speed-demon {
+  background:
+    url("/backgrounds/badge-speed-demon.jpg"),
+    linear-gradient(145deg, #f2d95b 0%, #d7a24c 42%, #173021 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.badge-first-ascent {
+  background:
+    url("/backgrounds/badge-first-ascent.jpg"),
+    linear-gradient(145deg, #eef1ec 0%, #9ab49a 48%, #315a46 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.badge-night-crawler {
+  background:
+    url("/backgrounds/badge-night-crawler.jpg"),
+    linear-gradient(145deg, #07140c 0%, #1e3440 48%, #8fb8c2 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.badge-multi-pitch {
+  background:
+    url("/backgrounds/badge-multi-pitch.jpg"),
+    linear-gradient(145deg, #dfe4dc 0%, #6f806e 44%, #0d2818 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.badge-dyno-master {
+  background:
+    url("/backgrounds/badge-dyno-master.jpg"),
+    linear-gradient(145deg, #d2a76d 0%, #c58d4a 44%, #173021 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.badge-crag-legend {
+  background:
+    url("/backgrounds/badge-crag-legend.jpg"),
+    linear-gradient(145deg, #83977f 0%, #53633f 45%, #10281a 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.badge-trailblazer {
+  background:
+    url("/backgrounds/badge-trailblazer.jpg"),
+    linear-gradient(145deg, #cfeaC9 0%, #a7c58b 42%, #315a46 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.journey-detail-main {
+  background:
+    linear-gradient(180deg, rgba(8, 24, 15, 0.02), rgba(8, 24, 15, 0.18)),
+    url("/backgrounds/journey-detail-main.jpg"),
+    radial-gradient(circle at 35% 38%, #d2a76d 0 7px, transparent 8px),
+    radial-gradient(circle at 68% 52%, #9ab49a 0 6px, transparent 7px),
+    linear-gradient(135deg, #eef1ec 0%, #d7a24c 42%, #173021 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.journey-detail-side {
+  background:
+    url("/backgrounds/journey-detail-side.jpg"),
+    linear-gradient(135deg, #07140c 0%, #315a46 48%, #d2a76d 100%);
+  background-position: center;
+  background-size: cover;
+}
+
+.journey-detail-map {
+  min-height: 155px;
+  background:
+    linear-gradient(180deg, rgba(13, 40, 24, 0.04), rgba(13, 40, 24, 0.16)),
+    url("/backgrounds/journey-detail-map.jpg"),
+    radial-gradient(circle at 30% 35%, #d2a76d 0 18px, transparent 19px),
+    radial-gradient(circle at 72% 62%, #9ab49a 0 24px, transparent 25px),
+    repeating-linear-gradient(145deg, #eef1ec 0 18px, #dfe8da 19px 34px, #b9c6b8 35px 38px);
+  background-position: center;
+  background-size: cover;
+}
