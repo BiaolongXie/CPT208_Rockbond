@@ -1,3 +1,5 @@
+import { avatarImages } from "./avatarData.js";
+
 export const sessionSeeds = [
   {
     id: "event_001",
@@ -18,6 +20,7 @@ export const sessionSeeds = [
         id: "discussion_001",
         author: "Sarah",
         avatar: "S",
+        avatarImage: avatarImages.sarahChen,
         text: "I can bring an extra chalk bag! Who else is joining?",
         time: "15m ago",
         createdAt: "2026-05-04T08:45:00Z",
@@ -26,6 +29,7 @@ export const sessionSeeds = [
         id: "discussion_002",
         author: "Alex",
         avatar: "A",
+        avatarImage: avatarImages.alexChen,
         text: "Nice Sarah! I'll reserve a corner near the V1 wall.",
         time: "8m ago",
         createdAt: "2026-05-04T08:52:00Z",
@@ -52,6 +56,7 @@ export const sessionSeeds = [
         id: "discussion_003",
         author: "Sarah",
         avatar: "S",
+        avatarImage: avatarImages.sarahChen,
         text: "I can bring an extra crash pad! Who else is bringing gear?",
         time: "15m ago",
         createdAt: "2026-05-04T13:45:00Z",
@@ -60,6 +65,7 @@ export const sessionSeeds = [
         id: "discussion_004",
         author: "Alex",
         avatar: "A",
+        avatarImage: avatarImages.alexChen,
         text: "Nice Sarah! I've got two. Marcus said he's bringing his brushes too.",
         time: "8m ago",
         createdAt: "2026-05-04T13:52:00Z",

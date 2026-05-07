@@ -1,19 +1,24 @@
+import { calculateRankProgression } from "./rankProgression.js";
+
 export function calculateClimbingProgress(logs) {
-  const routeCount = logs.reduce((sum, log) => sum + Number(log.routesCompleted || 1), 0);
-  const current = Math.min(12, Math.max(8, routeCount));
-  const target = 12;
-  const remaining = Math.max(0, target - current);
+  const rankProgress = calculateRankProgression(logs);
+  const current = rankProgress.xpIntoRank;
+  const target = rankProgress.rankSpan;
+  const remaining = rankProgress.xpToNextRank;
 
   return {
-    title: "Reach Gold Rank",
-    description: remaining > 0 ? `${remaining} more climbs to reach Gold rank.` : "Gold rank milestone reached. Keep the momentum going.",
+    title: `Reach ${rankProgress.nextRank} Rank`,
+    description: remaining > 0 ? `${remaining} XP more to reach ${rankProgress.nextRank} rank.` : `${rankProgress.currentRank} rank milestone reached. Keep the momentum going.`,
     current,
     target,
-    completed: current >= target,
-    currentRank: "Silver Tier",
-    nextRank: "Gold",
-    season: "Season 4",
-    label: `${current} / ${target} climbs`,
-    remainingLabel: remaining > 0 ? `${remaining} more climbs to reach Gold rank!` : "Gold rank milestone reached!",
+    completed: remaining === 0,
+    currentRank: rankProgress.rankLabel,
+    nextRank: rankProgress.nextRank,
+    season: `Season ${rankProgress.seasonId}`,
+    label: `${current} / ${target} XP`,
+    remainingLabel: remaining > 0 ? `${remaining} XP more to reach ${rankProgress.nextRank} rank!` : `${rankProgress.currentRank} rank milestone reached!`,
+    progressPercent: rankProgress.progressPercent,
+    totalXP: rankProgress.totalXP,
+    rankProgress,
   };
 }

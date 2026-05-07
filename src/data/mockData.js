@@ -1,7 +1,10 @@
+import { avatarImages, getAvatarImageByName } from "./avatarData.js";
+
 export const invitations = [
   {
     id: "invite_001",
     climberName: "Alex Rivera",
+    avatarImage: avatarImages.alexRivera,
     location: "Campus Climbing Gym",
     time: "Saturday 3:00 PM",
     skillLevel: "Beginner-friendly",
@@ -11,6 +14,7 @@ export const invitations = [
   {
     id: "invite_002",
     climberName: "Jordan Chen",
+    avatarImage: avatarImages.jordanChen,
     location: "The Summit Vault",
     time: "Friday 6:00 PM",
     skillLevel: "Occasional",
@@ -20,6 +24,7 @@ export const invitations = [
   {
     id: "invite_003",
     climberName: "Mia Thompson",
+    avatarImage: avatarImages.miaThompson,
     location: "Stone Grove",
     time: "Sunday 10:30 AM",
     skillLevel: "Regular",
@@ -94,8 +99,8 @@ export const badgeCatalog = [
   },
   {
     id: "event_explorer",
-    title: "Event Explorer",
-    description: "Join or save a climbing event.",
+    title: "Session Explorer",
+    description: "Join or save a public climbing session.",
   },
   {
     id: "weekly_quest",
@@ -114,6 +119,7 @@ export const notifications = [
     body: "Hey! Are you hitting the gym tonight?",
     time: "2m ago",
     avatar: "M",
+    avatarImage: avatarImages.marcusRivera,
   },
   {
     id: "notification_002",
@@ -141,6 +147,7 @@ export const notifications = [
     action: "followed you",
     time: "Yesterday",
     avatar: "S",
+    avatarImage: avatarImages.sarahChen,
   },
   {
     id: "notification_005",
@@ -164,6 +171,7 @@ export function buildFriendProfile(friendId) {
     level: partner.tags?.[0] || "V8 Climber",
     location: partner.location || "Boulder, Colorado",
     avatar: partner.climberName.slice(0, 1),
+    avatarImage: partner.avatarImage || getAvatarImageByName(partner.climberName),
     totalClimbs: partner.id === "invite_001" ? 248 : 124,
     milestones: partner.id === "invite_001" ? 14 : 8,
     rankNote: partner.id === "invite_001" ? "Top 5% Boulder" : "Friendly Sender",

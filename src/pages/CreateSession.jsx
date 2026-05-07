@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { CalendarDays, Check, Clock3, Globe2, Lock, MapPin, Send, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Avatar from "../components/Avatar.jsx";
 import BottomNav from "../components/BottomNav.jsx";
+import { getAvatarImageByName } from "../data/avatarData.js";
 import { getSessions, saveSessions } from "../utils/storage.js";
 
 const grades = ["V0", "V1", "V2", "V3", "V4", "V5", "V6+"];
@@ -128,8 +130,13 @@ export default function CreateSession() {
             const selected = selectedPartners.includes(name);
             return (
             <button key={name} type="button" onClick={() => togglePartner(name)} className="text-center">
-              <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[linear-gradient(135deg,#0d2818,#d7a24c)] text-lg font-black text-white ring-2 ring-white">
-                {name.slice(0, 1)}
+              <div className="relative mx-auto h-16 w-16">
+                <Avatar
+                  src={getAvatarImageByName(name)}
+                  alt={name}
+                  fallback={name.slice(0, 1)}
+                  className="h-16 w-16 text-lg ring-2 ring-white"
+                />
                 <span className={`absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full ${selected ? "bg-rock-green text-white" : "bg-white text-rock-stone shadow"}`}>
                   {selected ? <Check aria-hidden size={15} /> : "+"}
                 </span>

@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, Compass, Map, MessageSquare, Pin, SmilePlus } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Avatar from "../components/Avatar.jsx";
 import BadgePill from "../components/BadgePill.jsx";
 import BottomNav from "../components/BottomNav.jsx";
+import { avatarImages, getAvatarImageByName } from "../data/avatarData.js";
 import { circleMembers, findCircleById } from "../data/circleData.js";
 import { getCircleApplications, getJoinedChallenges } from "../utils/storage.js";
 
@@ -22,7 +24,12 @@ export default function CircleDetails() {
           <ArrowLeft aria-hidden size={24} strokeWidth={2.4} />
         </button>
         <h1 className="mr-auto text-lg font-black text-rock-green">Circles</h1>
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-rock-mint font-black text-rock-green">A</div>
+        <Avatar
+          src={avatarImages.alexChen}
+          alt="Alex Chen"
+          fallback="A"
+          className="h-11 w-11 ring-2 ring-rock-mint"
+        />
       </header>
 
       <main className="bg-rock-paper px-5 pb-32 pt-7">
@@ -76,9 +83,12 @@ export default function CircleDetails() {
           <div className="grid grid-cols-4 gap-4 text-center">
             {members.map((name) => (
               <div key={name}>
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[linear-gradient(135deg,#0d2818,#d7a24c)] text-lg font-black text-white ring-2 ring-rock-mint">
-                  {name.slice(0, 1)}
-                </div>
+                <Avatar
+                  src={getAvatarImageByName(name)}
+                  alt={name}
+                  fallback={name.slice(0, 1)}
+                  className="mx-auto h-14 w-14 text-lg ring-2 ring-rock-mint"
+                />
                 <p className="mt-2 text-sm text-zinc-700">{name}</p>
               </div>
             ))}

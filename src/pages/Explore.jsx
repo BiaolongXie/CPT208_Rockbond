@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import BadgePill from "../components/BadgePill.jsx";
 import BottomNav from "../components/BottomNav.jsx";
 import Header from "../components/Header.jsx";
-import { events } from "../data/mockData.js";
+import { sessionSeeds } from "../data/sessionData.js";
 import { unlockBadge } from "../utils/badges.js";
-import { getJoinedEvents, saveJoinedEvents } from "../utils/storage.js";
+import { getJoinedSessions, setPublicSessionJoined } from "../utils/sessionStore.js";
 
 const tabs = ["All Spots", "Gyms", "Outdoor Crags"];
 const spotFilters = [
@@ -77,26 +77,25 @@ const climbingSpots = [
   },
 ];
 
+const publicSessions = sessionSeeds.filter((session) => session.privacy === "Public");
+
 export default function Explore() {
   const [activeTab, setActiveTab] = useState("All Spots");
   const [query, setQuery] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [spotFilter, setSpotFilter] = useState("all");
-  const [joinedEvents, setJoinedEvents] = useState(getJoinedEvents());
+  const [, setSessionJoinVersion] = useState(0);
+  const joinedSessionIds = getJoinedSessions().map((session) => session.id);
   const filteredSpots = climbingSpots.filter((spot) => spotMatchesTab(spot, activeTab) && spotMatchesSearch(spot, query) && spotMatchesFilter(spot, spotFilter));
   const hasActiveFilter = spotFilter !== "all";
 
-  function toggleEvent(event) {
-    if (joinedEvents.some((item) => item.id === event.id)) {
-      const updated = joinedEvents.filter((item) => item.id !== event.id);
-      setJoinedEvents(updated);
-      saveJoinedEvents(updated);
-      return;
+  function togglePublicSession(session) {
+    const alreadyJoined = joinedSessionIds.includes(session.id);
+    setPublicSessionJoined(session, !alreadyJoined);
+    setSessionJoinVersion((value) => value + 1);
+    if (!alreadyJoined) {
+      unlockBadge("event_explorer", "Session Explorer");
     }
-    const updated = [...joinedEvents, { id: event.id, title: event.title, joinedAt: new Date().toISOString() }];
-    setJoinedEvents(updated);
-    saveJoinedEvents(updated);
-    unlockBadge("event_explorer", "Event Explorer");
   }
 
   return (
@@ -114,7 +113,7 @@ export default function Explore() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               className="min-w-0 flex-1 border-0 bg-transparent text-base outline-none placeholder:text-slate-400"
-              placeholder="Find gyms, crags, or events..."
+              placeholder="Find gyms, crags, or sessions..."
             />
             <button
               type="button"
@@ -155,7 +154,7 @@ export default function Explore() {
           ))}
         </section>
 
-        <section className="relative -mt-16 space-y-8 rounded-t-[42px] bg-rock-paper px-5 pb-32 pt-9 shadow-[0_-18px_44px_rgba(6,23,13,0.12)]">
+        <section className="relative -mt-16 space-y-8 rounded-t-[42px] bg-rock-paper px-5 pb-24 pt-9 shadow-[0_-18px_44px_rgba(6,23,13,0.12)]">
           <div className="grid grid-cols-3 gap-2 rounded-full">
             {tabs.map((tab) => (
               <button
@@ -194,25 +193,27 @@ export default function Explore() {
           </section>
 
           <section className="space-y-4">
-            <h2 className="text-lg font-black text-rock-ink">Community Events</h2>
-            {events.slice(0, 2).map((event, index) => {
-              const saved = joinedEvents.some((item) => item.id === event.id);
+            <h2 className="text-lg font-black text-rock-ink">Public Sessions</h2>
+            {publicSessions.slice(0, 2).map((session, index) => {
+              const saved = joinedSessionIds.includes(session.id);
               return (
-                <Link key={event.id} to={`/session/${event.id}`} className="flex items-center gap-4 rounded-[28px] bg-white p-4 shadow-soft">
+                <Link key={session.id} to={`/session/${session.id}`} className="flex items-center gap-4 rounded-[28px] bg-white p-4 shadow-soft">
                   <div className={`event-thumb event-thumb-${index} flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-white`}>
                     <CalendarDays aria-hidden size={24} strokeWidth={2.4} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold uppercase text-rock-moss">{event.time}</p>
-                    <h3 className="mt-1 text-base font-black leading-5">{event.title}</h3>
-                    <p className="mt-1 text-sm text-zinc-600">{event.location}</p>
+                    <p className="text-xs font-bold uppercase text-rock-moss">
+                      {[session.date, session.startTime].filter(Boolean).join(" - ")}
+                    </p>
+                    <h3 className="mt-1 text-base font-black leading-5">{session.title}</h3>
+                    <p className="mt-1 text-sm text-zinc-600">{session.location}</p>
                   </div>
                   <button
                     type="button"
-                    aria-label={saved ? `Unsave ${event.title}` : `Save ${event.title}`}
+                    aria-label={saved ? `Leave ${session.title}` : `Join ${session.title}`}
                     onClick={(clickEvent) => {
                       clickEvent.preventDefault();
-                      toggleEvent(event);
+                      togglePublicSession(session);
                     }}
                     className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition ${
                       saved ? "border-rock-green bg-rock-green text-white" : "border-rock-stone/30 bg-white text-rock-moss"
@@ -228,7 +229,7 @@ export default function Explore() {
 
         <Link
           to="/create-session"
-          className="fixed bottom-32 left-1/2 z-20 ml-[92px] flex h-14 -translate-x-1/2 items-center gap-2 rounded-full bg-rock-green px-6 font-black text-white shadow-lift"
+          className="fixed bottom-24 left-1/2 z-20 ml-[92px] flex h-14 -translate-x-1/2 items-center gap-2 rounded-full bg-rock-green px-6 font-black text-white shadow-lift"
         >
           <Plus aria-hidden size={22} strokeWidth={2.8} />
           Session

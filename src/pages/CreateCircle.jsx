@@ -2,7 +2,7 @@ import { ArrowLeft, Check, Lock, Mountain, Send, UsersRound } from "lucide-react
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "../components/BottomNav.jsx";
-import { getJoinedChallenges, saveJoinedChallenges } from "../utils/storage.js";
+import { getCreatedCircles, getJoinedChallenges, saveCreatedCircles, saveJoinedChallenges } from "../utils/storage.js";
 
 const focusOptions = ["Outdoor", "Bouldering", "Training"];
 
@@ -16,13 +16,32 @@ export default function CreateCircle() {
 
   function createCircle() {
     const id = `circle_${Date.now()}`;
+    const circle = {
+      id,
+      section: "active",
+      title: name.trim() || "New Climbing Circle",
+      members: "1 member",
+      activeMembers: "1 active member",
+      location: "Local climbing area",
+      status: privacy,
+      slogan: "Built by your crew",
+      description: description.trim() || "A small circle for planning climbs and sharing beta.",
+      mission: description.trim() || "A small circle for planning climbs and sharing beta.",
+      activeSince: "Just now",
+      ascents: 0,
+      crags: 0,
+      tags: [privacy, focus, "Beginner Friendly"],
+      detailTags: [focus, privacy, "Local Crew"],
+      createdAt: new Date().toISOString(),
+    };
+    saveCreatedCircles([circle, ...getCreatedCircles()]);
     saveJoinedChallenges([
       {
         id,
-        title: name.trim() || "New Climbing Circle",
+        title: circle.title,
         focus,
         status: privacy,
-        description: description.trim(),
+        description: circle.description,
         joinedAt: new Date().toISOString(),
       },
       ...getJoinedChallenges(),

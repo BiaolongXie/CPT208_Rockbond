@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, Info, MapPin, Mic, Phone, Send, Video } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import Avatar from "../components/Avatar.jsx";
 import { buildFriendProfile, seedChatMessages } from "../data/mockData.js";
+import { formatChatTime } from "../utils/dateFormat.js";
 import { getChats, saveChats } from "../utils/storage.js";
 
 export default function ActiveChat() {
@@ -26,7 +28,7 @@ export default function ActiveChat() {
         id: `message_${Date.now()}`,
         sender: "me",
         text: value.trim(),
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        time: formatChatTime(),
         createdAt: new Date().toISOString(),
       },
     ];
@@ -40,9 +42,12 @@ export default function ActiveChat() {
         <button type="button" aria-label="Go back" onClick={() => navigate(-1)} className="flex h-10 w-10 items-center justify-center rounded-full text-rock-green">
           <ArrowLeft aria-hidden size={24} strokeWidth={2.4} />
         </button>
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[linear-gradient(135deg,#0d2818,#cfeac9)] font-black text-white">
-          {friend.avatar}
-        </div>
+        <Avatar
+          src={friend.avatarImage}
+          alt={friend.name}
+          fallback={friend.avatar}
+          className="h-11 w-11"
+        />
         <div className="min-w-0 flex-1">
           <h1 className="text-base font-medium leading-5 text-rock-ink">{friend.name}</h1>
           <p className="text-sm text-rock-moss">Online</p>

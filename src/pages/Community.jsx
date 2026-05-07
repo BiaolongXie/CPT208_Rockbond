@@ -4,6 +4,7 @@ import {
   Clock3,
   Filter,
   MessageSquare,
+  Mountain,
   Plus,
   Search,
   UserPlus,
@@ -12,17 +13,20 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import BottomNav from "../components/BottomNav.jsx";
 import BadgePill from "../components/BadgePill.jsx";
 import Header from "../components/Header.jsx";
+import Avatar from "../components/Avatar.jsx";
+import { avatarImages } from "../data/avatarData.js";
 import { circles } from "../data/circleData.js";
 import { invitations } from "../data/mockData.js";
 import {
   getCircleApplications,
+  getCreatedCircles,
   getFriendRequests,
   getFriends,
   getJoinedChallenges,
   saveFriendRequests,
 } from "../utils/storage.js";
 
-const activeCircles = circles.filter((circle) => circle.section === "active");
+const defaultActiveCircles = circles.filter((circle) => circle.section === "active");
 const discoverCircles = circles.filter((circle) => circle.section === "discover" && circle.id !== "challenge_alpine");
 const alpineCircle = circles.find((circle) => circle.id === "challenge_alpine");
 
@@ -61,6 +65,8 @@ export default function Community() {
   const [activeRequestId, setActiveRequestId] = useState("");
   const [requestMessage, setRequestMessage] = useState("");
   const friends = getFriends();
+  const createdCircles = getCreatedCircles();
+  const activeCircles = [...createdCircles.map(normalizeCreatedCircle), ...defaultActiveCircles];
   const currentFilters = tab === "partners" ? partnerFilters : circleFilters;
   const activeFilter = tab === "partners" ? partnerFilter : circleFilter;
   const hasActiveFilter = activeFilter !== "all";
@@ -272,8 +278,13 @@ function PartnersList({
         return (
           <article key={invite.id} className="rounded-[32px] bg-white p-5 shadow-soft">
             <div className="flex items-center gap-4">
-              <Link to={`/friend/${invite.id}`} className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#cfeac9,#244b35)] text-xl font-black text-white">
-                {invite.climberName.slice(0, 1)}
+              <Link to={`/friend/${invite.id}`} className="shrink-0" aria-label={`Open ${invite.climberName} profile`}>
+                <Avatar
+                  src={invite.avatarImage}
+                  alt={invite.climberName}
+                  fallback={invite.climberName.slice(0, 1)}
+                  className="h-16 w-16 text-xl"
+                />
               </Link>
               <Link to={`/friend/${invite.id}`} className="min-w-0 flex-1">
                 <h2 className="truncate text-xl font-black">{invite.climberName}</h2>
@@ -486,13 +497,34 @@ function ActiveCircleCard({ circle, joined, onChat }) {
   );
 }
 
+function normalizeCreatedCircle(circle) {
+  return {
+    ...circle,
+    section: "active",
+    Icon: Mountain,
+    members: circle.members || "1 member",
+    activeMembers: circle.activeMembers || "1 active member",
+    tags: circle.tags || [circle.status || "Recruiting Now", "Beginner Friendly"],
+  };
+}
+
 function AvatarStack() {
+  const avatars = [
+    { name: "Alex", src: avatarImages.alexChen },
+    { name: "Marcus", src: avatarImages.marcusRivera },
+    { name: "Jordan", src: avatarImages.jordanChen },
+  ];
+
   return (
     <div className="mr-2 flex -space-x-2">
-      {["A", "M", "J"].map((letter) => (
-        <span key={letter} className="flex h-6 w-6 items-center justify-center rounded-full bg-rock-green text-[10px] font-black text-white ring-2 ring-white">
-          {letter}
-        </span>
+      {avatars.map((avatar) => (
+        <Avatar
+          key={avatar.name}
+          src={avatar.src}
+          alt={avatar.name}
+          fallback={avatar.name.slice(0, 1)}
+          className="h-6 w-6 text-[10px] ring-2 ring-white"
+        />
       ))}
       <span className="flex h-6 w-7 items-center justify-center rounded-full bg-rock-mint text-[10px] font-black text-rock-green ring-2 ring-white">+25</span>
     </div>

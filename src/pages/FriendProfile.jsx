@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, CalendarDays, Check, MapPin, MessageSquare, Mountain, Send, UserPlus, UsersRound, Video } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import Avatar from "../components/Avatar.jsx";
 import BadgePill from "../components/BadgePill.jsx";
 import BottomNav from "../components/BottomNav.jsx";
 import { buildFriendProfile } from "../data/mockData.js";
@@ -52,9 +53,12 @@ export default function FriendProfile() {
 
       <main className="bg-rock-paper px-5 pb-32 pt-7">
         <section className="text-center">
-          <div className="mx-auto flex h-32 w-32 items-center justify-center rounded-[34px] bg-[linear-gradient(145deg,#07140c,#5b7064)] text-5xl font-black text-white ring-4 ring-white shadow-soft">
-            {friend.avatar}
-          </div>
+          <Avatar
+            src={friend.avatarImage}
+            alt={friend.name}
+            fallback={friend.avatar}
+            className="mx-auto h-32 w-32 rounded-[34px] text-5xl ring-4 ring-white shadow-soft"
+          />
           <BadgePill tone="dark">{friend.level}</BadgePill>
           <h2 className="mt-3 text-lg font-medium text-rock-ink">{friend.name}</h2>
           <p className="mt-1 inline-flex items-center gap-1.5 text-zinc-600">

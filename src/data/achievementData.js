@@ -32,6 +32,21 @@ export const achievementWall = [
     Icon: Zap,
   },
   {
+    id: "project_saver",
+    title: "Project Saver",
+    subtitle: "Route Notes Saved",
+    className: "Memory",
+    terrain: "Any",
+    howToEarn: "Save a Quick Log with notes so the route can be revisited later.",
+    progressCurrent: 0,
+    progressTarget: 1,
+    rarity: "LOCKED",
+    rarityText: "Unlocked when you turn a climb into a remembered project with notes.",
+    imageClass: "badge-first-ascent",
+    defaultUnlocked: false,
+    Icon: Route,
+  },
+  {
     id: "first_ascent",
     title: "First Ascent",
     subtitle: "New Route Found",
@@ -132,5 +147,7 @@ export function mergeUnlockedBadges(storedBadges) {
   return achievementWall.map((badge) => ({
     ...badge,
     unlocked: badge.defaultUnlocked || unlockedIds.has(badge.id),
+    progressCurrent: unlockedIds.has(badge.id) ? Math.max(badge.progressCurrent, badge.progressTarget) : badge.progressCurrent,
+    rarity: unlockedIds.has(badge.id) && badge.rarity === "LOCKED" ? "UNLOCKED" : badge.rarity,
   }));
 }

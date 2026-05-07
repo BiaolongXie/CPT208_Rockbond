@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, Cloud, MessageSquare, MoreVertical, Mountain, Trophy, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Avatar from "../components/Avatar.jsx";
 import BadgePill from "../components/BadgePill.jsx";
 import BottomNav from "../components/BottomNav.jsx";
+import { getAvatarImageByName } from "../data/avatarData.js";
 import { buildFriendProfile, notifications, seedChatMessages } from "../data/mockData.js";
 import {
   getChats,
@@ -37,6 +39,7 @@ export default function Notifications() {
       body: request.message,
       time: "Just now",
       avatar: request.fromName.slice(0, 1),
+      avatarImage: getAvatarImageByName(request.fromName),
       request,
     }));
 
@@ -212,8 +215,13 @@ function NotificationCard({ notification, following, onFollow, onAccept, onRejec
 function NotificationIcon({ notification }) {
   if (notification.avatar) {
     return (
-      <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#0d2818,#cfeac9)] text-lg font-black text-white">
-        {notification.avatar}
+      <div className="relative h-14 w-14 shrink-0">
+        <Avatar
+          src={notification.avatarImage}
+          alt={notification.title}
+          fallback={notification.avatar}
+          className="h-14 w-14 text-lg"
+        />
         {notification.type === "message" && (
           <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-rock-moss shadow">
             <MessageSquare aria-hidden size={13} strokeWidth={2.5} />

@@ -6,12 +6,15 @@ export const STORAGE_KEYS = {
   joinedChallenges: "rockbond_joinedChallenges",
   joinedInvitations: "rockbond_joinedInvitations",
   joinedEvents: "rockbond_joinedEvents",
+  createdCircles: "rockbond_createdCircles",
   circleApplications: "rockbond_circleApplications",
   circleChats: "rockbond_circleChats",
   friendRequests: "rockbond_friendRequests",
   friends: "rockbond_friends",
   chats: "rockbond_chats",
   badges: "rockbond_badges",
+  rankCelebrationPending: "rockbond_rankCelebrationPending",
+  rankCelebrationsShown: "rockbond_rankCelebrationsShown",
 };
 
 export const defaultQuest = {
@@ -101,6 +104,14 @@ export function saveCircleApplications(items) {
   return writeJSON(STORAGE_KEYS.circleApplications, items);
 }
 
+export function getCreatedCircles() {
+  return readJSON(STORAGE_KEYS.createdCircles, []);
+}
+
+export function saveCreatedCircles(items) {
+  return writeJSON(STORAGE_KEYS.createdCircles, items);
+}
+
 export function getCircleChats() {
   return readJSON(STORAGE_KEYS.circleChats, {});
 }
@@ -139,4 +150,24 @@ export function getChats() {
 
 export function saveChats(chats) {
   return writeJSON(STORAGE_KEYS.chats, chats);
+}
+
+export function getPendingRankCelebration() {
+  return readJSON(STORAGE_KEYS.rankCelebrationPending, null);
+}
+
+export function savePendingRankCelebration(celebration) {
+  return writeJSON(STORAGE_KEYS.rankCelebrationPending, celebration);
+}
+
+export function clearPendingRankCelebration() {
+  localStorage.removeItem(STORAGE_KEYS.rankCelebrationPending);
+}
+
+export function getShownRankCelebrations() {
+  return readJSON(STORAGE_KEYS.rankCelebrationsShown, []);
+}
+
+export function saveShownRankCelebrations(items) {
+  return writeJSON(STORAGE_KEYS.rankCelebrationsShown, items);
 }

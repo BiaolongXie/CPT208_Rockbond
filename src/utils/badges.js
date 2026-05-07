@@ -22,7 +22,7 @@ export function syncLogBadges(logs) {
   if (logs.length > 0) {
     unlockBadge("first_log", "First Log Recorded");
   }
-  if (logs.some((log) => log.isProject)) {
+  if (logs.some((log) => log.isProject || log.notes?.trim())) {
     unlockBadge("project_saver", "Project Saver");
   }
 }

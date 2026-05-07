@@ -1,4 +1,6 @@
 import { Mountain, Network, Zap } from "lucide-react";
+import { avatarImages } from "./avatarData.js";
+import { getCreatedCircles } from "../utils/storage.js";
 
 export const circles = [
   {
@@ -139,6 +141,24 @@ export const circles = [
 export const circleMembers = ["Alex", "Sarah", "Jordan", "Mike", "Lena", "Chris", "Bo"];
 
 export function findCircleById(circleId) {
+  const createdCircle = getCreatedCircles().find((circle) => circle.id === circleId);
+  if (createdCircle) {
+    return {
+      ...createdCircle,
+      section: "active",
+      Icon: Mountain,
+      members: createdCircle.members || "1 member",
+      activeMembers: createdCircle.activeMembers || "1 active member",
+      location: createdCircle.location || "Local climbing area",
+      slogan: createdCircle.slogan || "Built by your crew",
+      mission: createdCircle.mission || createdCircle.description || "A local circle for planning climbs and sharing beta.",
+      activeSince: createdCircle.activeSince || "Just now",
+      ascents: createdCircle.ascents || 0,
+      crags: createdCircle.crags || 0,
+      tags: createdCircle.tags || [createdCircle.status || "Recruiting Now", "Beginner Friendly"],
+      detailTags: createdCircle.detailTags || ["Local Crew", createdCircle.status || "Recruiting Now"],
+    };
+  }
   return circles.find((circle) => circle.id === circleId) || circles[0];
 }
 
@@ -148,6 +168,7 @@ export function seedCircleMessages(circle) {
       id: "circle_seed_001",
       sender: "Marcus",
       avatar: "M",
+      avatarImage: avatarImages.marcusRivera,
       text: "Conditions at the Upper Tier are perfect today. Friction is 10/10. Anyone coming up?",
       time: "09:12 AM",
       createdAt: "2026-05-04T09:12:00Z",
@@ -156,6 +177,7 @@ export function seedCircleMessages(circle) {
       id: "circle_seed_002",
       sender: "Sarah",
       avatar: "S",
+      avatarImage: avatarImages.sarahChen,
       text: "Packing my rack now! Should be there by 10:30. Marcus, did you bring the 70m rope or should I?",
       time: "09:15 AM",
       createdAt: "2026-05-04T09:15:00Z",
@@ -164,6 +186,7 @@ export function seedCircleMessages(circle) {
       id: "circle_seed_003",
       sender: "Marcus",
       avatar: "M",
+      avatarImage: avatarImages.marcusRivera,
       text: "Got it covered. I've also got some extra chalk if someone runs out. It's dusty up here!",
       time: "09:16 AM",
       createdAt: "2026-05-04T09:16:00Z",
@@ -172,6 +195,7 @@ export function seedCircleMessages(circle) {
       id: "circle_seed_004",
       sender: "me",
       avatar: "A",
+      avatarImage: avatarImages.alexChen,
       text: "On my way too! Just grabbing some snacks for the group. Energy bars for everyone?",
       time: "09:20 AM",
       createdAt: "2026-05-04T09:20:00Z",
@@ -180,6 +204,7 @@ export function seedCircleMessages(circle) {
       id: "circle_seed_005",
       sender: "Alex",
       avatar: "A",
+      avatarImage: avatarImages.alexChen,
       text: `Just arrived. Check out the line on 'Midnight Lightning'. Clear as day!`,
       time: "09:24 AM",
       image: true,

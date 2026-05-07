@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, Clock3, Send, ShieldCheck } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import Avatar from "../components/Avatar.jsx";
 import BadgePill from "../components/BadgePill.jsx";
 import BottomNav from "../components/BottomNav.jsx";
+import { getAvatarImageByName } from "../data/avatarData.js";
 import { circleMembers, findCircleById } from "../data/circleData.js";
 import { getCircleApplications, saveCircleApplications } from "../utils/storage.js";
 
@@ -96,9 +98,13 @@ export default function CircleApply() {
         <section className="mt-8 flex items-center gap-3 rounded-[24px] bg-white/75 p-4 shadow-soft">
           <div className="flex -space-x-2">
             {circleMembers.slice(0, 3).map((name) => (
-              <span key={name} className="flex h-10 w-10 items-center justify-center rounded-full bg-rock-green text-sm font-black text-white ring-2 ring-white">
-                {name.slice(0, 1)}
-              </span>
+              <Avatar
+                key={name}
+                src={getAvatarImageByName(name)}
+                alt={name}
+                fallback={name.slice(0, 1)}
+                className="h-10 w-10 text-sm ring-2 ring-white"
+              />
             ))}
           </div>
           <p className="text-base leading-5 text-zinc-700">Join {circle.members.replace(/members/i, "others")} already in this circle</p>

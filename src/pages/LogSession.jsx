@@ -3,7 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import Header from "../components/Header.jsx";
 import { syncLogBadges } from "../utils/badges.js";
-import { getLogs, saveLogs } from "../utils/storage.js";
+import { formatMonthYear, formatNumericDate } from "../utils/dateFormat.js";
+import { calculateRankProgression, getCurrentSeasonId, getLogXP } from "../utils/rankProgression.js";
+import { getLogs, getShownRankCelebrations, saveLogs, savePendingRankCelebration } from "../utils/storage.js";
 
 const today = new Date().toISOString().slice(0, 10);
 const climbingTypes = ["Bouldering", "Top rope", "Lead climbing", "Mixed"];
@@ -44,9 +46,13 @@ export default function LogSession() {
       isProject: false,
       createdAt: new Date().toISOString(),
     };
-    const logs = [log, ...getLogs()];
+    const existingLogs = getLogs();
+    const previousRank = calculateRankProgression(existingLogs);
+    const logs = [log, ...existingLogs];
+    const nextRank = calculateRankProgression(logs);
     saveLogs(logs);
     syncLogBadges(logs);
+    queueRankCelebration(previousRank, nextRank, log);
     navigate("/home", { state: { message: "Quick log saved successfully." } });
   }
 
@@ -111,6 +117,25 @@ export default function LogSession() {
       [name]: value,
     }));
   }
+}
+
+function queueRankCelebration(previousRank, nextRank, log) {
+  if (nextRank.currentIndex <= previousRank.currentIndex) return;
+
+  const seasonId = getCurrentSeasonId();
+  const celebrationKey = `${seasonId}:${nextRank.currentRank}`;
+  const alreadyShown = getShownRankCelebrations().includes(celebrationKey);
+  if (alreadyShown) return;
+
+  savePendingRankCelebration({
+    id: celebrationKey,
+    seasonId,
+    fromRank: previousRank.currentRank,
+    toRank: nextRank.currentRank,
+    totalXP: nextRank.totalXP,
+    gainedXP: getLogXP(log),
+    createdAt: new Date().toISOString(),
+  });
 }
 
 function CustomSelect({ value, options, onChange, compact = false }) {
@@ -185,7 +210,7 @@ function DatePicker({ value, onChange }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.12em] text-rock-moss">Choose date</p>
-              <h2 className="mt-1 text-lg font-black text-rock-green">{viewDate.toLocaleDateString(undefined, { month: "long", year: "numeric" })}</h2>
+              <h2 className="mt-1 text-lg font-black text-rock-green">{formatMonthYear(viewDate)}</h2>
             </div>
             <div className="flex items-center gap-2">
               <button type="button" aria-label="Previous month" onClick={() => shiftMonth(-1)} className="flex h-9 w-9 items-center justify-center rounded-full bg-rock-mist text-rock-green">
@@ -262,9 +287,7 @@ function buildDateChoices(date) {
 }
 
 function formatDisplayDate(value) {
-  const date = new Date(`${value}T00:00:00`);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString(undefined, { year: "numeric", month: "2-digit", day: "2-digit" });
+  return formatNumericDate(`${value}T00:00:00`, value);
 }
 
 function toDateInputValue(date) {

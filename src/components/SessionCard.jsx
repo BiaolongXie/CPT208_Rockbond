@@ -3,7 +3,7 @@ import BadgePill from "./BadgePill.jsx";
 export default function SessionCard({ session, compact = false }) {
   if (!session) {
     return (
-      <article className="rounded-[28px] bg-white p-5 shadow-soft">
+      <article className={`${compact ? "rounded-[24px] p-4" : "rounded-[28px] p-5"} bg-white shadow-soft`}>
         <h3 className="font-black text-rock-green">No climbing journey yet</h3>
         <p className="mt-2 text-sm leading-5 text-zinc-600">Add a quick log or join a session to start your progress story.</p>
       </article>
@@ -18,7 +18,7 @@ export default function SessionCard({ session, compact = false }) {
       : `${session.climbingType} - ${session.routesCompleted} routes - ${session.difficultyLevel}`;
 
   return (
-    <article className="rounded-[28px] bg-white p-5 shadow-soft">
+    <article className={`${compact ? "rounded-[24px] p-4" : "rounded-[28px] p-5"} bg-white shadow-soft`}>
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase text-rock-moss">{session.date}</p>

@@ -1,8 +1,12 @@
 import { Award, Check, Clock3, MapPin, Mountain, Star } from "lucide-react";
 import { Link } from "react-router-dom";
+import Avatar from "../components/Avatar.jsx";
 import BottomNav from "../components/BottomNav.jsx";
 import Header from "../components/Header.jsx";
+import { avatarImages } from "../data/avatarData.js";
 import { mergeUnlockedBadges } from "../data/achievementData.js";
+import { formatShortDate } from "../utils/dateFormat.js";
+import { calculateRankProgression } from "../utils/rankProgression.js";
 import { getBadges, getLogs, getSessions, getUserProfile } from "../utils/storage.js";
 
 const fallbackJourney = [
@@ -44,6 +48,7 @@ const fallbackJourney = [
 export default function Profile() {
   const profile = getUserProfile();
   const logs = getLogs();
+  const rankProgress = calculateRankProgression(logs);
   const sessions = getSessions();
   const journeyItems = [
     ...logs.map((log) => ({ ...log, entryType: "log" })),
@@ -60,11 +65,14 @@ export default function Profile() {
       <Header avatar="A" />
       <div className="space-y-8 px-5 pb-32 pt-9">
         <section className="text-center">
-          <div className="mx-auto flex h-36 w-36 items-center justify-center rounded-[42px] bg-[linear-gradient(145deg,#07140c,#315a46)] text-5xl font-black text-white ring-4 ring-rock-mint shadow-soft">
-            A
-          </div>
-          <span className="-mt-5 inline-flex rounded-full bg-rock-stone px-5 py-2 text-sm font-black text-white shadow">
-            {profile?.level || "V7"} Climber
+          <Avatar
+            src={avatarImages.alexChen}
+            alt={profile?.name || "Alex Chen"}
+            fallback="A"
+            className="mx-auto h-36 w-36 rounded-[42px] text-5xl ring-4 ring-rock-mint shadow-soft"
+          />
+          <span className="mt-3 inline-flex rounded-full bg-rock-stone px-5 py-2 text-sm font-black text-white shadow">
+            {rankProgress.rankLabel}
           </span>
           <h1 className="mt-3 text-4xl font-black text-rock-green">{profile?.name || "Alex Chen"}</h1>
           <p className="mt-1 inline-flex items-center gap-1.5 text-zinc-600">
@@ -158,7 +166,5 @@ function JourneyTimelineItem({ item }) {
 }
 
 function formatJourneyDate(value) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value || "Today";
-  return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  return formatShortDate(value);
 }

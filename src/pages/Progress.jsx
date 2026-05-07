@@ -1,10 +1,11 @@
-import { Link } from "react-router-dom";
-import { CalendarCheck, HelpCircle, Medal, Mountain, Route, UsersRound } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, CalendarCheck, Crown, Diamond, HelpCircle, Hexagon, Medal, Route, Star, Trophy, UsersRound } from "lucide-react";
 import BadgePill from "../components/BadgePill.jsx";
 import BottomNav from "../components/BottomNav.jsx";
 import ProgressBar from "../components/ProgressBar.jsx";
 import { getLogs, getSessions } from "../utils/storage.js";
 import { calculateClimbingProgress } from "../utils/climbingProgress.js";
+import { getLogXP, rankThresholds } from "../utils/rankProgression.js";
 
 const fallbackActivities = [
   {
@@ -38,18 +39,25 @@ const fallbackActivities = [
 ];
 
 export default function Progress() {
+  const navigate = useNavigate();
   const logs = getLogs();
   const sessions = getSessions();
   const climbingProgress = calculateClimbingProgress(logs);
-  const activities = buildActivities(logs, sessions);
+  const activities = buildActivities(climbingProgress.rankProgress.seasonLogs, sessions);
+  const rankMedals = buildRankMedals(climbingProgress.rankProgress.currentIndex);
 
   return (
     <>
       <header className="flex h-20 items-center justify-between bg-rock-paper px-5 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[linear-gradient(145deg,#07140c,#6f806e)] text-sm font-black text-white ring-2 ring-white">
-            A
-          </div>
+          <button
+            type="button"
+            aria-label="Go back"
+            onClick={() => navigate(-1)}
+            className="flex h-12 w-12 items-center justify-center rounded-full text-rock-green transition hover:bg-rock-mist"
+          >
+            <ArrowLeft aria-hidden size={25} strokeWidth={2.5} />
+          </button>
           <h1 className="text-xl font-black text-rock-green">Climbing Progress</h1>
         </div>
         <Link
@@ -71,9 +79,13 @@ export default function Progress() {
         </section>
 
         <section className="mt-10 grid grid-cols-3 items-end gap-4 text-center">
-          <RankMedal label="Bronze" tone="bronze" />
-          <RankMedal label="Silver" active />
-          <RankMedal label="Gold" tone="gold" />
+          {rankMedals.map((rank, index) =>
+            rank ? (
+              <RankMedal key={rank.name} label={rank.name} tone={getRankTone(rank.name)} active={index === 1} />
+            ) : (
+              <div key={`empty_${index}`} aria-hidden className="h-24" />
+            ),
+          )}
         </section>
 
         <section className="mt-12 rounded-[34px] bg-white/80 p-6 shadow-soft">
@@ -110,12 +122,33 @@ export default function Progress() {
   );
 }
 
+function buildRankMedals(currentIndex) {
+  return [
+    rankThresholds[currentIndex - 1] || null,
+    rankThresholds[currentIndex],
+    rankThresholds[currentIndex + 1] || null,
+  ];
+}
+
+function getRankTone(rankName) {
+  const tones = {
+    Bronze: "bronze",
+    Silver: "silver",
+    Gold: "gold",
+    Platinum: "platinum",
+    Diamond: "diamond",
+    Master: "master",
+    Legend: "legend",
+  };
+  return tones[rankName] || "silver";
+}
+
 function buildActivities(logs, sessions) {
   const logActivities = logs.slice(0, 2).map((log) => ({
     id: `log_${log.id}`,
     title: `${log.location} - ${log.difficultyLevel}`,
     meta: `${log.date} - ${log.climbingType}`,
-    xp: Math.min(9, Number(log.routesCompleted || 1)),
+    xp: getLogXP(log),
     icon: Route,
   }));
 
@@ -132,20 +165,38 @@ function buildActivities(logs, sessions) {
 }
 
 function RankMedal({ label, active = false, tone = "silver" }) {
+  const Icon = getRankIcon(label);
   const tones = {
-    bronze: "bg-[#d3a16f] text-white",
-    silver: "bg-slate-200 text-rock-green",
-    gold: "bg-[#f2d95b] text-white",
+    bronze: "bg-orange-100 text-orange-400",
+    silver: "bg-zinc-100 text-zinc-500",
+    gold: "bg-yellow-100 text-yellow-500",
+    platinum: "bg-cyan-50 text-cyan-500",
+    diamond: "bg-indigo-50 text-indigo-500",
+    master: "bg-purple-50 text-purple-600",
+    legend: "bg-rock-ink text-white",
   };
 
   return (
     <div className={`flex flex-col items-center ${active ? "scale-110" : ""}`}>
       <div className={`flex items-center justify-center rounded-full ${active ? "h-24 w-24 ring-4 ring-white shadow-soft" : "h-16 w-16"} ${tones[tone]}`}>
-        <Medal aria-hidden size={active ? 42 : 28} strokeWidth={2.6} />
+        <Icon aria-hidden size={active ? 42 : 28} strokeWidth={2.6} />
       </div>
       <p className={`mt-3 ${active ? "text-xl text-rock-ink" : "text-base text-zinc-600"}`}>{label}</p>
     </div>
   );
+}
+
+function getRankIcon(rankName) {
+  const icons = {
+    Bronze: Hexagon,
+    Silver: Hexagon,
+    Gold: Medal,
+    Platinum: Diamond,
+    Diamond: Trophy,
+    Master: Star,
+    Legend: Crown,
+  };
+  return icons[rankName] || Medal;
 }
 
 function ActivityCard({ activity }) {

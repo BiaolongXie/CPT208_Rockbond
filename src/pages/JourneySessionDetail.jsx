@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import BottomNav from "../components/BottomNav.jsx";
 import ShareActionSheet from "../components/ShareActionSheet.jsx";
+import { formatDetailDate } from "../utils/dateFormat.js";
 import { getLogs, getSessions } from "../utils/storage.js";
 
 export default function JourneySessionDetail() {
@@ -150,10 +151,4 @@ function StatCard({ icon: Icon, label, value }) {
       <p className="mt-1 text-xl font-black text-rock-ink">{value}</p>
     </article>
   );
-}
-
-function formatDetailDate(value) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value || "Today";
-  return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }).toUpperCase();
 }

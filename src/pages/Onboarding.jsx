@@ -5,11 +5,11 @@ import BadgePill from "../components/BadgePill.jsx";
 import { saveUserProfile } from "../utils/storage.js";
 
 const levels = ["Beginner", "Occasional", "Regular", "Experienced"];
-const goals = ["Track progress", "Find partners", "Discover events", "Stay motivated"];
+const goals = ["Track progress", "Find partners", "Discover sessions", "Stay motivated"];
 const goalIcons = {
   "Track progress": LineChart,
   "Find partners": Handshake,
-  "Discover events": CalendarDays,
+  "Discover sessions": CalendarDays,
   "Stay motivated": Sparkles,
 };
 

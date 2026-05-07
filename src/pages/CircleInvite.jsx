@@ -1,6 +1,7 @@
 import { ArrowLeft, Check, Send } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Avatar from "../components/Avatar.jsx";
 import BottomNav from "../components/BottomNav.jsx";
 import { findCircleById } from "../data/circleData.js";
 import { invitations } from "../data/mockData.js";
@@ -43,9 +44,12 @@ export default function CircleInvite() {
             const active = selected.includes(partner.id);
             return (
               <button key={partner.id} type="button" onClick={() => togglePartner(partner.id)} className="flex w-full items-center gap-4 rounded-[28px] bg-white p-4 text-left shadow-soft">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#0d2818,#d7a24c)] text-lg font-black text-white">
-                  {partner.climberName.slice(0, 1)}
-                </div>
+                <Avatar
+                  src={partner.avatarImage}
+                  alt={partner.climberName}
+                  fallback={partner.climberName.slice(0, 1)}
+                  className="h-14 w-14 text-lg"
+                />
                 <div className="min-w-0 flex-1">
                   <h3 className="truncate font-black">{partner.climberName}</h3>
                   <p className="text-sm text-zinc-600">{partner.location}</p>

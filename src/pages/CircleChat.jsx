@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, Mic, Search, Send } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import Avatar from "../components/Avatar.jsx";
+import { avatarImages, getAvatarImageByName } from "../data/avatarData.js";
 import { findCircleById, seedCircleMessages } from "../data/circleData.js";
+import { formatChatTime } from "../utils/dateFormat.js";
 import { getCircleChats, saveCircleChats } from "../utils/storage.js";
 
 export default function CircleChat() {
@@ -26,8 +29,9 @@ export default function CircleChat() {
         id: `circle_message_${Date.now()}`,
         sender: "me",
         avatar: "A",
+        avatarImage: avatarImages.alexChen,
         text: text.trim(),
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        time: formatChatTime(),
         createdAt: new Date().toISOString(),
       },
     ];
@@ -83,9 +87,12 @@ function CircleMessage({ message }) {
   return (
     <article className={`flex items-end gap-3 ${mine ? "justify-end" : "justify-start"}`}>
       {!mine && (
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#0d2818,#d7a24c)] text-sm font-black text-white">
-          {message.avatar}
-        </div>
+        <Avatar
+          src={message.avatarImage || getAvatarImageByName(message.sender)}
+          alt={message.sender}
+          fallback={message.avatar || message.sender.slice(0, 1)}
+          className="h-10 w-10 text-sm"
+        />
       )}
       <div className={`max-w-[78%] ${mine ? "text-right" : ""}`}>
         <p className="mb-1 px-2 text-sm text-zinc-700">{mine ? "Me" : message.sender}</p>

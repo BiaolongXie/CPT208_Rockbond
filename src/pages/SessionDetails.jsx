@@ -1,11 +1,14 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, Clock3, MoreHorizontal, Plus, Send, TrendingUp } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import Avatar from "../components/Avatar.jsx";
 import BadgePill from "../components/BadgePill.jsx";
 import BottomNav from "../components/BottomNav.jsx";
 import ShareActionSheet from "../components/ShareActionSheet.jsx";
+import { avatarImages, getAvatarImageByName } from "../data/avatarData.js";
 import { findSeedSession } from "../data/sessionData.js";
-import { getSessions, saveSessions } from "../utils/storage.js";
+import { getSessions } from "../utils/storage.js";
+import { setPublicSessionJoined, upsertSession } from "../utils/sessionStore.js";
 
 export default function SessionDetails() {
   const navigate = useNavigate();
@@ -18,15 +21,12 @@ export default function SessionDetails() {
 
   function persist(nextSession) {
     setSession(nextSession);
-    const existing = getSessions();
-    const nextSessions = existing.some((item) => item.id === nextSession.id)
-      ? existing.map((item) => (item.id === nextSession.id ? nextSession : item))
-      : [nextSession, ...existing];
-    saveSessions(nextSessions);
+    upsertSession(nextSession);
   }
 
   function joinSession() {
-    persist({ ...session, joined: true, joinedAt: new Date().toISOString() });
+    const result = setPublicSessionJoined(session, true);
+    setSession(result.session);
   }
 
   function addComment() {
@@ -39,6 +39,7 @@ export default function SessionDetails() {
           id: `discussion_${Date.now()}`,
           author: "Alex",
           avatar: "A",
+          avatarImage: avatarImages.alexChen,
           text: comment.trim(),
           time: "Just now",
           createdAt: new Date().toISOString(),
@@ -99,9 +100,12 @@ export default function SessionDetails() {
           <div className="mt-5 flex gap-5 overflow-x-auto pb-2 scrollbar-none">
             {(session.participants || []).map((name) => (
               <div key={name} className="text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[linear-gradient(135deg,#0d2818,#d7a24c)] text-lg font-black text-white">
-                  {name.slice(0, 1)}
-                </div>
+                <Avatar
+                  src={getAvatarImageByName(name)}
+                  alt={name}
+                  fallback={name.slice(0, 1)}
+                  className="mx-auto h-16 w-16 text-lg"
+                />
                 <p className="mt-2 text-sm text-zinc-700">{name}</p>
               </div>
             ))}
@@ -154,9 +158,12 @@ function InfoCard({ Icon, label, value }) {
 function DiscussionItem({ item }) {
   return (
     <article className="flex items-start gap-4">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#0d2818,#d7a24c)] text-sm font-black text-white">
-        {item.avatar || item.author.slice(0, 1)}
-      </div>
+      <Avatar
+        src={item.avatarImage || getAvatarImageByName(item.author)}
+        alt={item.author}
+        fallback={item.avatar || item.author.slice(0, 1)}
+        className="h-10 w-10 text-sm"
+      />
       <div className="min-w-0 flex-1">
         <div className="mb-2 flex items-center justify-between">
           <h4 className="font-black">{item.author}</h4>
