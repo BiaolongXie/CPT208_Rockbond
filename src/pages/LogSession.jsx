@@ -18,7 +18,8 @@ export default function LogSession() {
     date: today,
     location: "Campus Climbing Gym",
     climbingType: "Bouldering",
-    routesCompleted: 6,
+    routesCompleted: 1,
+    durationHours: 2,
     difficultyLevel: "V3",
     notes: "",
   });
@@ -33,8 +34,17 @@ export default function LogSession() {
 
   function submit(event) {
     event.preventDefault();
-    if (!form.date || !form.location.trim() || Number(form.routesCompleted) <= 0) {
-      setError("Please add a date, location, and at least one completed route.");
+    const durationHours = Number(form.durationHours);
+    if (
+      !form.date ||
+      !form.location.trim() ||
+      Number(form.routesCompleted) <= 0 ||
+      Number(form.routesCompleted) > 99 ||
+      !Number.isFinite(durationHours) ||
+      durationHours < 0.25 ||
+      durationHours > 12
+    ) {
+      setError("Please add a date, location, 1-99 completed routes, and 0.25-12 climbing hours.");
       return;
     }
 
@@ -43,6 +53,7 @@ export default function LogSession() {
       id: `log_${Date.now()}`,
       location: form.location.trim(),
       routesCompleted: Number(form.routesCompleted),
+      durationHours,
       isProject: false,
       createdAt: new Date().toISOString(),
     };
@@ -86,13 +97,32 @@ export default function LogSession() {
         <div className="grid grid-cols-2 gap-4">
           <label className="block">
             <span className="text-sm font-bold">Routes completed</span>
-            <input className="mt-2 h-[58px] w-full rounded-3xl border-0 bg-white px-5 shadow-soft outline-rock-green" min="1" type="number" name="routesCompleted" value={form.routesCompleted} onChange={updateField} />
+            <input className="mt-2 h-[58px] w-full rounded-3xl border-0 bg-white px-5 shadow-soft outline-rock-green" min="1" max="99" type="number" name="routesCompleted" value={form.routesCompleted} onChange={updateField} />
+            <p className="mt-2 text-xs leading-4 text-zinc-500">Count only routes you completed from start to finish, not partial attempts.</p>
           </label>
           <label className="block">
             <span className="text-sm font-bold">Difficulty</span>
             <CustomSelect value={form.difficultyLevel} options={difficultyGrades} onChange={(value) => updateSelectField("difficultyLevel", value)} compact />
           </label>
         </div>
+
+        <label className="block">
+          <span className="text-sm font-bold">Climbing duration</span>
+          <div className="mt-2 flex h-[58px] items-center rounded-3xl bg-white px-5 shadow-soft focus-within:outline focus-within:outline-2 focus-within:outline-rock-green">
+            <input
+              className="min-w-0 flex-1 border-0 bg-transparent text-base outline-none"
+              min="0.25"
+              max="12"
+              step="0.25"
+              type="number"
+              name="durationHours"
+              value={form.durationHours}
+              onChange={updateField}
+            />
+            <span className="ml-3 text-sm font-black text-rock-moss">hours</span>
+          </div>
+          <p className="mt-2 text-xs leading-4 text-zinc-500">Used for Total Hours on Home. Count your actual climbing time for this log.</p>
+        </label>
 
         <label className="block">
           <span className="text-sm font-bold">Log notes</span>

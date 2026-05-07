@@ -75,6 +75,9 @@ export default function Community() {
   const filteredPartners = invitations.filter((invite) =>
     partnerMatchesSearch(invite, query) && partnerMatchesFilter(invite, partnerFilter, friends, friendRequests)
   );
+  const friendPartnerIds = new Set(friends.map((friend) => friend.id));
+  const friendPartners = filteredPartners.filter((invite) => friendPartnerIds.has(invite.id));
+  const recommendedPartners = filteredPartners.filter((invite) => !friendPartnerIds.has(invite.id));
 
   const filteredActiveCircles = activeCircles.filter((circle) =>
     circleMatchesSearch(circle, query) && circleMatchesFilter(circle, circleFilter, joinedChallenges, "active")
@@ -222,7 +225,8 @@ export default function Community() {
 
         {tab === "partners" ? (
           <PartnersList
-            partners={filteredPartners}
+            friendPartners={friendPartners}
+            recommendedPartners={recommendedPartners}
             friends={friends}
             friendRequests={friendRequests}
             activeRequestId={activeRequestId}
@@ -252,7 +256,8 @@ export default function Community() {
 }
 
 function PartnersList({
-  partners,
+  friendPartners,
+  recommendedPartners,
   friends,
   friendRequests,
   activeRequestId,
@@ -264,84 +269,171 @@ function PartnersList({
   hasSearch,
   hasFilter,
 }) {
-  if (partners.length === 0) {
+  const partnerCount = friendPartners.length + recommendedPartners.length;
+
+  if (partnerCount === 0 && (hasSearch || hasFilter)) {
     return <EmptyState title="No partners found" detail={hasSearch || hasFilter ? "Try a different keyword or clear the filter." : "New partners will appear here soon."} />;
   }
 
   return (
-    <section className="space-y-4 pb-24">
-      {partners.map((invite) => {
-        const isFriend = friends.some((friend) => friend.id === invite.id);
-        const hasPending = friendRequests.some((request) => request.toFriendId === invite.id && request.status === "pending");
-        const isEditing = activeRequestId === invite.id && !isFriend && !hasPending;
-
-        return (
-          <article key={invite.id} className="rounded-[32px] bg-white p-5 shadow-soft">
-            <div className="flex items-center gap-4">
-              <Link to={`/friend/${invite.id}`} className="shrink-0" aria-label={`Open ${invite.climberName} profile`}>
-                <Avatar
-                  src={invite.avatarImage}
-                  alt={invite.climberName}
-                  fallback={invite.climberName.slice(0, 1)}
-                  className="h-16 w-16 text-xl"
-                />
-              </Link>
-              <Link to={`/friend/${invite.id}`} className="min-w-0 flex-1">
-                <h2 className="truncate text-xl font-black">{invite.climberName}</h2>
-                <div className="mt-1 flex flex-wrap gap-1">
-                  {invite.tags.map((tag) => (
-                    <BadgePill key={tag}>{tag}</BadgePill>
-                  ))}
-                </div>
-              </Link>
-              <button
-                type="button"
-                aria-label={isFriend ? `Message ${invite.climberName}` : hasPending ? `${invite.climberName} request pending` : `Add ${invite.climberName}`}
-                onClick={() => onAction(invite)}
-                disabled={hasPending}
-                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full transition ${
-                  isFriend ? "bg-rock-green text-white" : hasPending ? "bg-rock-mist text-rock-stone" : "bg-rock-mist text-rock-moss hover:bg-rock-mint"
-                }`}
-              >
-                {isFriend ? <MessageSquare aria-hidden size={23} strokeWidth={2.4} /> : hasPending ? <Clock3 aria-hidden size={22} strokeWidth={2.4} /> : <UserPlus aria-hidden size={23} strokeWidth={2.4} />}
-              </button>
-            </div>
-
-            {isEditing && (
-              <div className="mt-5 rounded-[24px] bg-rock-mist/70 p-4">
-                <label className="text-sm font-black text-rock-green" htmlFor={`friend-request-${invite.id}`}>
-                  Friend request message
-                </label>
-                <textarea
-                  id={`friend-request-${invite.id}`}
-                  value={requestMessage}
-                  onChange={(event) => onMessageChange(event.target.value)}
-                  className="mt-3 min-h-24 w-full resize-none rounded-2xl bg-white p-4 text-sm leading-5 outline-rock-green"
-                  placeholder="Write a short intro..."
-                />
-                <div className="mt-3 grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={onCancelRequest}
-                    className="h-11 rounded-full bg-white font-black text-rock-moss"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onSendRequest(invite)}
-                    disabled={!requestMessage.trim()}
-                    className="h-11 rounded-full bg-rock-green font-black text-white disabled:opacity-50"
-                  >
-                    Send Request
-                  </button>
-                </div>
-              </div>
-            )}
-          </article>
-        );
-      })}
+    <section className="space-y-8 pb-24">
+      <PartnerSection
+        title="My Friends"
+        countLabel={`${friendPartners.length} Friends`}
+        emptyDetail={hasSearch || hasFilter ? "No friends match this view." : "Accepted partners will appear here after you connect."}
+        partners={friendPartners}
+        friends={friends}
+        friendRequests={friendRequests}
+        activeRequestId={activeRequestId}
+        requestMessage={requestMessage}
+        onAction={onAction}
+        onMessageChange={onMessageChange}
+        onCancelRequest={onCancelRequest}
+        onSendRequest={onSendRequest}
+      />
+      <PartnerSection
+        title="Recommended Partners"
+        countLabel={`${recommendedPartners.length} People`}
+        emptyDetail={hasSearch || hasFilter ? "No recommendations match this view." : "Community recommendations will appear here soon."}
+        partners={recommendedPartners}
+        friends={friends}
+        friendRequests={friendRequests}
+        activeRequestId={activeRequestId}
+        requestMessage={requestMessage}
+        onAction={onAction}
+        onMessageChange={onMessageChange}
+        onCancelRequest={onCancelRequest}
+        onSendRequest={onSendRequest}
+      />
     </section>
+  );
+}
+
+function PartnerSection({
+  title,
+  countLabel,
+  emptyDetail,
+  partners,
+  friends,
+  friendRequests,
+  activeRequestId,
+  requestMessage,
+  onAction,
+  onMessageChange,
+  onCancelRequest,
+  onSendRequest,
+}) {
+  return (
+    <section>
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-base font-medium">{title}</h2>
+        <BadgePill>{countLabel}</BadgePill>
+      </div>
+      {partners.length > 0 ? (
+        <div className="space-y-4">
+          {partners.map((invite) => (
+            <PartnerCard
+              key={invite.id}
+              invite={invite}
+              friends={friends}
+              friendRequests={friendRequests}
+              activeRequestId={activeRequestId}
+              requestMessage={requestMessage}
+              onAction={onAction}
+              onMessageChange={onMessageChange}
+              onCancelRequest={onCancelRequest}
+              onSendRequest={onSendRequest}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-[28px] border border-dashed border-rock-mint bg-rock-mint/20 px-5 py-6 text-sm font-bold leading-5 text-rock-moss">
+          {emptyDetail}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function PartnerCard({
+  invite,
+  friends,
+  friendRequests,
+  activeRequestId,
+  requestMessage,
+  onAction,
+  onMessageChange,
+  onCancelRequest,
+  onSendRequest,
+}) {
+  const isFriend = friends.some((friend) => friend.id === invite.id);
+  const hasPending = friendRequests.some((request) => request.toFriendId === invite.id && request.status === "pending");
+  const isEditing = activeRequestId === invite.id && !isFriend && !hasPending;
+
+  return (
+    <article className="rounded-[32px] bg-white p-5 shadow-soft">
+      <div className="flex items-center gap-4">
+        <Link to={`/friend/${invite.id}`} className="shrink-0" aria-label={`Open ${invite.climberName} profile`}>
+          <Avatar
+            src={invite.avatarImage}
+            alt={invite.climberName}
+            fallback={invite.climberName.slice(0, 1)}
+            className="h-16 w-16 text-xl"
+          />
+        </Link>
+        <Link to={`/friend/${invite.id}`} className="min-w-0 flex-1">
+          <h2 className="truncate text-xl font-black">{invite.climberName}</h2>
+          <div className="mt-1 flex flex-wrap gap-1">
+            {invite.tags.map((tag) => (
+              <BadgePill key={tag}>{tag}</BadgePill>
+            ))}
+          </div>
+        </Link>
+        <button
+          type="button"
+          aria-label={isFriend ? `Message ${invite.climberName}` : hasPending ? `${invite.climberName} request pending` : `Add ${invite.climberName}`}
+          onClick={() => onAction(invite)}
+          disabled={hasPending}
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full transition ${
+            isFriend ? "bg-rock-green text-white" : hasPending ? "bg-rock-mist text-rock-stone" : "bg-rock-mist text-rock-moss hover:bg-rock-mint"
+          }`}
+        >
+          {isFriend ? <MessageSquare aria-hidden size={23} strokeWidth={2.4} /> : hasPending ? <Clock3 aria-hidden size={22} strokeWidth={2.4} /> : <UserPlus aria-hidden size={23} strokeWidth={2.4} />}
+        </button>
+      </div>
+
+      {isEditing && (
+        <div className="mt-5 rounded-[24px] bg-rock-mist/70 p-4">
+          <label className="text-sm font-black text-rock-green" htmlFor={`friend-request-${invite.id}`}>
+            Friend request message
+          </label>
+          <textarea
+            id={`friend-request-${invite.id}`}
+            value={requestMessage}
+            onChange={(event) => onMessageChange(event.target.value)}
+            className="mt-3 min-h-24 w-full resize-none rounded-2xl bg-white p-4 text-sm leading-5 outline-rock-green"
+            placeholder="Write a short intro..."
+          />
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={onCancelRequest}
+              className="h-11 rounded-full bg-white font-black text-rock-moss"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => onSendRequest(invite)}
+              disabled={!requestMessage.trim()}
+              className="h-11 rounded-full bg-rock-green font-black text-white disabled:opacity-50"
+            >
+              Send Request
+            </button>
+          </div>
+        </div>
+      )}
+    </article>
   );
 }
 

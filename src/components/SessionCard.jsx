@@ -15,7 +15,7 @@ export default function SessionCard({ session, compact = false }) {
   const details =
     session.entryType === "session"
       ? [session.location, session.time, session.skillLevel || session.goal].filter(Boolean).join(" - ")
-      : `${session.climbingType} - ${session.routesCompleted} routes - ${session.difficultyLevel}`;
+      : [session.climbingType, `${session.routesCompleted} routes`, session.difficultyLevel, formatDuration(session.durationHours)].filter(Boolean).join(" - ");
 
   return (
     <article className={`${compact ? "rounded-[24px] p-4" : "rounded-[28px] p-5"} bg-white shadow-soft`}>
@@ -30,4 +30,9 @@ export default function SessionCard({ session, compact = false }) {
       {!compact && session.notes && <p className="mt-4 text-sm leading-5 text-zinc-600">{session.notes}</p>}
     </article>
   );
+}
+
+function formatDuration(hours) {
+  const value = Number(hours || 0);
+  return value > 0 ? `${value.toFixed(1)}h` : "";
 }

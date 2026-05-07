@@ -6,6 +6,7 @@ import BottomNav from "../components/BottomNav.jsx";
 import Header from "../components/Header.jsx";
 import { sessionSeeds } from "../data/sessionData.js";
 import { unlockBadge } from "../utils/badges.js";
+import { getSessions } from "../utils/storage.js";
 import { getJoinedSessions, setPublicSessionJoined } from "../utils/sessionStore.js";
 
 const tabs = ["All Spots", "Gyms", "Outdoor Crags"];
@@ -77,7 +78,7 @@ const climbingSpots = [
   },
 ];
 
-const publicSessions = sessionSeeds.filter((session) => session.privacy === "Public");
+const seedPublicSessions = sessionSeeds.filter((session) => session.privacy === "Public");
 
 export default function Explore() {
   const [activeTab, setActiveTab] = useState("All Spots");
@@ -86,6 +87,7 @@ export default function Explore() {
   const [spotFilter, setSpotFilter] = useState("all");
   const [, setSessionJoinVersion] = useState(0);
   const joinedSessionIds = getJoinedSessions().map((session) => session.id);
+  const publicSessions = buildPublicSessions();
   const filteredSpots = climbingSpots.filter((spot) => spotMatchesTab(spot, activeTab) && spotMatchesSearch(spot, query) && spotMatchesFilter(spot, spotFilter));
   const hasActiveFilter = spotFilter !== "all";
 
@@ -194,11 +196,12 @@ export default function Explore() {
 
           <section className="space-y-4">
             <h2 className="text-lg font-black text-rock-ink">Public Sessions</h2>
-            {publicSessions.slice(0, 2).map((session, index) => {
+            {publicSessions.map((session, index) => {
               const saved = joinedSessionIds.includes(session.id);
+              const thumbIndex = index % 2;
               return (
                 <Link key={session.id} to={`/session/${session.id}`} className="flex items-center gap-4 rounded-[28px] bg-white p-4 shadow-soft">
-                  <div className={`event-thumb event-thumb-${index} flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-white`}>
+                  <div className={`event-thumb event-thumb-${thumbIndex} flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-white`}>
                     <CalendarDays aria-hidden size={24} strokeWidth={2.4} />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -249,6 +252,22 @@ function MapMarker({ label, className = "", dark = false }) {
       <div className={`mx-auto mt-1 h-4 w-4 rounded-full border-2 border-white shadow ${dark ? "bg-rock-green" : "bg-rock-moss"}`} />
     </div>
   );
+}
+
+function buildPublicSessions() {
+  const storedPublicSessions = getSessions().filter((session) => session.privacy === "Public");
+  return dedupeSessions([...storedPublicSessions, ...seedPublicSessions]).sort(
+    (a, b) => new Date(b.createdAt || b.joinedAt || 0) - new Date(a.createdAt || a.joinedAt || 0),
+  );
+}
+
+function dedupeSessions(sessions) {
+  const seen = new Set();
+  return sessions.filter((session) => {
+    if (!session?.id || seen.has(session.id)) return false;
+    seen.add(session.id);
+    return true;
+  });
 }
 
 function SpotCard({ spot }) {

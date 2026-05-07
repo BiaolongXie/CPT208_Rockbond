@@ -115,7 +115,7 @@ function buildJourneyDetail(entryType, entryId) {
       date: formatDetailDate(log.date || log.createdAt),
       grade: log.difficultyLevel || log.grade || "V4",
       attempts: String(log.attempts || log.routesCompleted || 1),
-      duration: log.duration || "2h",
+      duration: formatDuration(log.durationHours) || log.duration || "0h",
       conditions: log.conditions || "Indoor",
       notes: log.notes || `Logged ${log.routesCompleted || 1} routes and kept steady progress at ${log.difficultyLevel || "your current level"}.`,
       tags: [log.climbingType || "Climbing", log.isProject ? "Project" : "Log", log.difficultyLevel || "Progress"],
@@ -139,6 +139,11 @@ function buildJourneyDetail(entryType, entryId) {
   }
 
   return fallback;
+}
+
+function formatDuration(hours) {
+  const value = Number(hours || 0);
+  return value > 0 ? `${value.toFixed(1)}h` : "";
 }
 
 function StatCard({ icon: Icon, label, value }) {

@@ -56,8 +56,8 @@ export default function Profile() {
   ].sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
   const badges = getBadges();
   const profileBadges = mergeUnlockedBadges(badges).slice(0, 3);
-  const climbCount = Math.max(124, logs.reduce((sum, log) => sum + Number(log.routesCompleted || 1), 0));
-  const milestoneCount = Math.max(8, badges.length);
+  const climbCount = logs.reduce((sum, log) => sum + Number(log.routesCompleted || 0), 0);
+  const milestoneCount = badges.length;
   const displayJourney = journeyItems.length > 0 ? journeyItems.slice(0, 3).map(toJourneyItem) : fallbackJourney;
 
   return (

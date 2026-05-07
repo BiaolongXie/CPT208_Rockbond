@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CalendarDays, Clock3, TrendingUp, UsersRound } from "lucide-react";
+import { CalendarDays, Clock3, LogOut, TrendingUp, UsersRound } from "lucide-react";
 import BottomNav from "../components/BottomNav.jsx";
 import Header from "../components/Header.jsx";
 import QuestCard from "../components/QuestCard.jsx";
@@ -8,7 +8,7 @@ import RankCelebrationModal from "../components/RankCelebrationModal.jsx";
 import SessionCard from "../components/SessionCard.jsx";
 import { clearPendingRankCelebration, getLogs, getPendingRankCelebration, getShownRankCelebrations, saveShownRankCelebrations } from "../utils/storage.js";
 import { calculateClimbingProgress } from "../utils/climbingProgress.js";
-import { getJoinedSessions } from "../utils/sessionStore.js";
+import { getJoinedSessions, setPublicSessionJoined } from "../utils/sessionStore.js";
 
 export default function Home() {
   const [rankCelebration, setRankCelebration] = useState(() => {
@@ -22,8 +22,9 @@ export default function Home() {
   const logs = getLogs().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   const climbingProgress = calculateClimbingProgress(logs);
   const recentLog = logs[0];
-  const joinedSessions = getJoinedSessions().slice(0, 2);
-  const totalHours = Math.max(0.5, logs.length * 2.5).toFixed(1);
+  const [, setSessionVersion] = useState(0);
+  const joinedSessions = getJoinedSessions();
+  const totalHours = logs.reduce((sum, log) => sum + Number(log.durationHours || 0), 0).toFixed(1);
 
   return (
     <>
@@ -66,7 +67,7 @@ export default function Home() {
                 Castle Rock conditions are perfect today. 3 buddies are heading there.
               </p>
             </div>
-            <Link to="/community" className="shrink-0 rounded-full bg-white px-3.5 py-2 text-xs font-black text-rock-green shadow-lift">
+            <Link to="/session/event_002" className="shrink-0 rounded-full bg-white px-3.5 py-2 text-xs font-black text-rock-green shadow-lift">
               Join Session
             </Link>
           </div>
@@ -82,7 +83,7 @@ export default function Home() {
           {joinedSessions.length > 0 ? (
             <div className="space-y-3">
               {joinedSessions.map((session) => (
-                <JoinedSessionCard key={session.id} session={session} />
+                <JoinedSessionCard key={session.id} session={session} onLeave={leaveSession} />
               ))}
             </div>
           ) : (
@@ -123,9 +124,14 @@ export default function Home() {
     clearPendingRankCelebration();
     setRankCelebration(null);
   }
+
+  function leaveSession(session) {
+    setPublicSessionJoined(session, false);
+    setSessionVersion((value) => value + 1);
+  }
 }
 
-function JoinedSessionCard({ session }) {
+function JoinedSessionCard({ session, onLeave }) {
   return (
     <Link to={`/session/${session.id}`} className="flex items-center gap-3 rounded-[24px] bg-white p-4 shadow-soft transition active:scale-[0.99]">
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rock-green text-white">
@@ -137,9 +143,18 @@ function JoinedSessionCard({ session }) {
           {[session.location, session.date, session.startTime].filter(Boolean).join(" - ")}
         </p>
       </div>
-      <span className="shrink-0 rounded-full bg-rock-mist px-3 py-1 text-[10px] font-black text-rock-moss">
-        JOINED
-      </span>
+      <button
+        type="button"
+        aria-label={`Leave ${session.title || "session"}`}
+        onClick={(event) => {
+          event.preventDefault();
+          onLeave(session);
+        }}
+        className="inline-flex shrink-0 items-center gap-1 rounded-full bg-rock-mist px-3 py-2 text-[10px] font-black text-rock-moss transition hover:bg-rock-mint hover:text-rock-green"
+      >
+        <LogOut aria-hidden size={13} strokeWidth={2.5} />
+        Leave
+      </button>
     </Link>
   );
 }

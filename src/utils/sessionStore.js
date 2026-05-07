@@ -13,7 +13,7 @@ export function upsertSession(session) {
 export function getJoinedSessions() {
   const sessions = getSessions();
   const joinedRecords = getJoinedEvents();
-  const fromSessions = sessions.filter((session) => session.joined || session.hosted);
+  const fromSessions = sessions.filter((session) => session.joined);
   const fromJoinedRecords = joinedRecords
     .map((record) => {
       const storedSession = sessions.find((session) => session.id === record.id);
@@ -31,13 +31,14 @@ export function getJoinedSessions() {
 export function setPublicSessionJoined(session, joined) {
   const sessions = getSessions();
   const existing = sessions.find((item) => item.id === session.id);
-  const joinedAt = joined ? new Date().toISOString() : existing?.joinedAt;
+  const joinedAt = joined ? new Date().toISOString() : "";
+  const sourceParticipants = existing?.participants || session.participants || [];
   const nextSession = {
     ...session,
     ...existing,
     joined,
     joinedAt,
-    participants: joined ? ensureParticipant(existing?.participants || session.participants, "Alex") : existing?.participants || session.participants || [],
+    participants: joined ? ensureParticipant(sourceParticipants, "Alex") : removeParticipant(sourceParticipants, "Alex"),
   };
   const nextSessions = sessions.some((item) => item.id === nextSession.id)
     ? sessions.map((item) => (item.id === nextSession.id ? nextSession : item))
@@ -57,6 +58,10 @@ export function setPublicSessionJoined(session, joined) {
 
 function ensureParticipant(participants = [], name) {
   return participants.includes(name) ? participants : [name, ...participants];
+}
+
+function removeParticipant(participants = [], name) {
+  return participants.filter((participant) => participant !== name);
 }
 
 function dedupeSessions(sessions) {

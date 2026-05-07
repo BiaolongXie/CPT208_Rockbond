@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowLeft, Clock3, MoreHorizontal, Plus, Send, TrendingUp } from "lucide-react";
+import { ArrowLeft, Clock3, LogOut, MoreHorizontal, Plus, Send, TrendingUp } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import Avatar from "../components/Avatar.jsx";
 import BadgePill from "../components/BadgePill.jsx";
@@ -24,8 +24,8 @@ export default function SessionDetails() {
     upsertSession(nextSession);
   }
 
-  function joinSession() {
-    const result = setPublicSessionJoined(session, true);
+  function toggleSessionJoined() {
+    const result = setPublicSessionJoined(session, !session.joined);
     setSession(result.session);
   }
 
@@ -72,12 +72,13 @@ export default function SessionDetails() {
             <h2 className="mt-3 text-lg font-medium text-white">{session.title}</h2>
             <button
               type="button"
-              onClick={joinSession}
-              disabled={session.joined}
-              className="mt-4 flex h-16 w-full items-center justify-center gap-3 rounded-full bg-rock-green text-lg font-medium text-white shadow-lift disabled:bg-rock-stone"
+              onClick={toggleSessionJoined}
+              className={`mt-4 flex h-16 w-full items-center justify-center gap-3 rounded-full text-lg font-medium text-white shadow-lift ${
+                session.joined ? "bg-rock-stone" : "bg-rock-green"
+              }`}
             >
-              <Plus aria-hidden size={23} strokeWidth={2.7} />
-              {session.joined ? "Joined" : "Join Session"}
+              {session.joined ? <LogOut aria-hidden size={22} strokeWidth={2.6} /> : <Plus aria-hidden size={23} strokeWidth={2.7} />}
+              {session.joined ? "Leave Session" : "Join Session"}
             </button>
           </div>
         </section>
