@@ -6,6 +6,7 @@ import { syncLogBadges } from "../utils/badges.js";
 import { formatMonthYear, formatNumericDate } from "../utils/dateFormat.js";
 import { calculateRankProgression, getCurrentSeasonId, getLogXP } from "../utils/rankProgression.js";
 import { getLogs, getShownRankCelebrations, saveLogs, savePendingRankCelebration } from "../utils/storage.js";
+import { notifyRankUp } from "../utils/userNotifications.js";
 
 const today = new Date().toISOString().slice(0, 10);
 const climbingTypes = ["Bouldering", "Top rope", "Lead climbing", "Mixed"];
@@ -157,7 +158,7 @@ function queueRankCelebration(previousRank, nextRank, log) {
   const alreadyShown = getShownRankCelebrations().includes(celebrationKey);
   if (alreadyShown) return;
 
-  savePendingRankCelebration({
+  const celebration = {
     id: celebrationKey,
     seasonId,
     fromRank: previousRank.currentRank,
@@ -165,7 +166,9 @@ function queueRankCelebration(previousRank, nextRank, log) {
     totalXP: nextRank.totalXP,
     gainedXP: getLogXP(log),
     createdAt: new Date().toISOString(),
-  });
+  };
+  savePendingRankCelebration(celebration);
+  notifyRankUp(celebration);
 }
 
 function CustomSelect({ value, options, onChange, compact = false }) {

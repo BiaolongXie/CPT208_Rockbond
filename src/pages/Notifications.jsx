@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { ArrowLeft, Cloud, MessageSquare, MoreVertical, Mountain, Trophy, UserPlus } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, Award, Cloud, MessageSquare, MoreVertical, Mountain, Trophy, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Avatar from "../components/Avatar.jsx";
 import BadgePill from "../components/BadgePill.jsx";
@@ -10,10 +10,12 @@ import {
   getChats,
   getFriendRequests,
   getFriends,
+  getUserNotifications,
   saveChats,
   saveFriendRequests,
   saveFriends,
 } from "../utils/storage.js";
+import { markNotificationsRead } from "../utils/notificationStatus.js";
 
 const tabs = [
   { id: "all", label: "All" },
@@ -27,6 +29,11 @@ export default function Notifications() {
   const [activeTab, setActiveTab] = useState("all");
   const [following, setFollowing] = useState(false);
   const [friendRequests, setFriendRequests] = useState(getFriendRequests());
+  const [userNotifications] = useState(getUserNotifications());
+
+  useEffect(() => {
+    markNotificationsRead();
+  }, []);
 
   const requestNotifications = friendRequests
     .filter((request) => request.status === "pending")
@@ -44,9 +51,9 @@ export default function Notifications() {
     }));
 
   const visibleNotifications = useMemo(() => {
-    const allNotifications = [...requestNotifications, ...notifications];
+    const allNotifications = [...requestNotifications, ...userNotifications, ...notifications];
     return allNotifications.filter((item) => activeTab === "all" || item.category === activeTab);
-  }, [activeTab, friendRequests]);
+  }, [activeTab, friendRequests, userNotifications]);
 
   function acceptRequest(request) {
     const updatedRequests = friendRequests.map((item) =>
@@ -237,6 +244,22 @@ function NotificationIcon({ notification }) {
   }
 
   if (notification.type === "achievement") {
+    return (
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-rock-green text-white">
+        <Trophy aria-hidden size={25} strokeWidth={2.4} />
+      </div>
+    );
+  }
+
+  if (notification.type === "badge_unlocked") {
+    return (
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-rock-mint text-rock-green">
+        <Award aria-hidden size={25} strokeWidth={2.4} />
+      </div>
+    );
+  }
+
+  if (notification.type === "rank_up") {
     return (
       <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-rock-green text-white">
         <Trophy aria-hidden size={25} strokeWidth={2.4} />

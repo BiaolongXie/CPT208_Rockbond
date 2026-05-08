@@ -12,6 +12,8 @@ export const STORAGE_KEYS = {
   friendRequests: "rockbond_friendRequests",
   friends: "rockbond_friends",
   chats: "rockbond_chats",
+  userNotifications: "rockbond_userNotifications",
+  readNotificationIds: "rockbond_readNotificationIds",
   badges: "rockbond_badges",
   rankCelebrationPending: "rockbond_rankCelebrationPending",
   rankCelebrationsShown: "rockbond_rankCelebrationsShown",
@@ -150,6 +152,22 @@ export function getChats() {
 
 export function saveChats(chats) {
   return writeJSON(STORAGE_KEYS.chats, chats);
+}
+
+export function getUserNotifications() {
+  return readJSON(STORAGE_KEYS.userNotifications, []);
+}
+
+export function saveUserNotifications(items) {
+  return writeJSON(STORAGE_KEYS.userNotifications, items);
+}
+
+export function getReadNotificationIds() {
+  return readJSON(STORAGE_KEYS.readNotificationIds, []);
+}
+
+export function saveReadNotificationIds(ids) {
+  return writeJSON(STORAGE_KEYS.readNotificationIds, ids);
 }
 
 export function getPendingRankCelebration() {

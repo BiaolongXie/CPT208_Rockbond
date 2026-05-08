@@ -27,6 +27,14 @@ function RootRedirect() {
   return <Navigate to={getUserProfile()?.onboardingCompleted ? "/home" : "/onboarding"} replace />;
 }
 
+function RequireOnboarding({ children }) {
+  return getUserProfile()?.onboardingCompleted ? children : <Navigate to="/onboarding" replace />;
+}
+
+function OnboardingRoute() {
+  return getUserProfile()?.onboardingCompleted ? <Navigate to="/home" replace /> : <Onboarding />;
+}
+
 export default function App() {
   const location = useLocation();
   const isOnboarding = location.pathname === "/onboarding";
@@ -35,27 +43,27 @@ export default function App() {
     <AppShell compact={isOnboarding}>
       <Routes>
         <Route path="/" element={<RootRedirect />} />
-        <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/log-session" element={<LogSession />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/achievements" element={<AchievementWall />} />
-        <Route path="/badge/:badgeId" element={<BadgeDetails />} />
-        <Route path="/journey/:entryType/:entryId" element={<JourneySessionDetail />} />
-        <Route path="/friend/:friendId" element={<FriendProfile />} />
-        <Route path="/chat/:friendId" element={<ActiveChat />} />
-        <Route path="/circle/:circleId" element={<CircleDetails />} />
-        <Route path="/circle/:circleId/apply" element={<CircleApply />} />
-        <Route path="/circle/:circleId/invite" element={<CircleInvite />} />
-        <Route path="/circle/:circleId/chat" element={<CircleChat />} />
-        <Route path="/create-circle" element={<CreateCircle />} />
-        <Route path="/create-session" element={<CreateSession />} />
-        <Route path="/session/:sessionId" element={<SessionDetails />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/progress" element={<Progress />} />
-        <Route path="/rank-help" element={<RankHelp />} />
-        <Route path="/community" element={<Community />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/onboarding" element={<OnboardingRoute />} />
+        <Route path="/home" element={<RequireOnboarding><Home /></RequireOnboarding>} />
+        <Route path="/log-session" element={<RequireOnboarding><LogSession /></RequireOnboarding>} />
+        <Route path="/notifications" element={<RequireOnboarding><Notifications /></RequireOnboarding>} />
+        <Route path="/achievements" element={<RequireOnboarding><AchievementWall /></RequireOnboarding>} />
+        <Route path="/badge/:badgeId" element={<RequireOnboarding><BadgeDetails /></RequireOnboarding>} />
+        <Route path="/journey/:entryType/:entryId" element={<RequireOnboarding><JourneySessionDetail /></RequireOnboarding>} />
+        <Route path="/friend/:friendId" element={<RequireOnboarding><FriendProfile /></RequireOnboarding>} />
+        <Route path="/chat/:friendId" element={<RequireOnboarding><ActiveChat /></RequireOnboarding>} />
+        <Route path="/circle/:circleId" element={<RequireOnboarding><CircleDetails /></RequireOnboarding>} />
+        <Route path="/circle/:circleId/apply" element={<RequireOnboarding><CircleApply /></RequireOnboarding>} />
+        <Route path="/circle/:circleId/invite" element={<RequireOnboarding><CircleInvite /></RequireOnboarding>} />
+        <Route path="/circle/:circleId/chat" element={<RequireOnboarding><CircleChat /></RequireOnboarding>} />
+        <Route path="/create-circle" element={<RequireOnboarding><CreateCircle /></RequireOnboarding>} />
+        <Route path="/create-session" element={<RequireOnboarding><CreateSession /></RequireOnboarding>} />
+        <Route path="/session/:sessionId" element={<RequireOnboarding><SessionDetails /></RequireOnboarding>} />
+        <Route path="/explore" element={<RequireOnboarding><Explore /></RequireOnboarding>} />
+        <Route path="/progress" element={<RequireOnboarding><Progress /></RequireOnboarding>} />
+        <Route path="/rank-help" element={<RequireOnboarding><RankHelp /></RequireOnboarding>} />
+        <Route path="/community" element={<RequireOnboarding><Community /></RequireOnboarding>} />
+        <Route path="/profile" element={<RequireOnboarding><Profile /></RequireOnboarding>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AppShell>

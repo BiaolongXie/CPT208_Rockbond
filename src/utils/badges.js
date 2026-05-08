@@ -1,4 +1,5 @@
 import { getBadges, saveBadges } from "./storage.js";
+import { notifyBadgeUnlocked } from "./userNotifications.js";
 
 export function unlockBadge(id, title) {
   const current = getBadges();
@@ -6,15 +7,17 @@ export function unlockBadge(id, title) {
     return current;
   }
 
+  const badge = {
+    id,
+    title,
+    unlockedAt: new Date().toISOString(),
+  };
   const updated = [
     ...current,
-    {
-      id,
-      title,
-      unlockedAt: new Date().toISOString(),
-    },
+    badge,
   ];
   saveBadges(updated);
+  notifyBadgeUnlocked(badge);
   return updated;
 }
 

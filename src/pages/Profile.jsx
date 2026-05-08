@@ -1,6 +1,7 @@
 import { Award, Check, Clock3, MapPin, Mountain, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import Avatar from "../components/Avatar.jsx";
+import BadgePill from "../components/BadgePill.jsx";
 import BottomNav from "../components/BottomNav.jsx";
 import Header from "../components/Header.jsx";
 import { avatarImages } from "../data/avatarData.js";
@@ -47,6 +48,8 @@ const fallbackJourney = [
 
 export default function Profile() {
   const profile = getUserProfile();
+  const profileLevel = profile?.level || "Regular";
+  const profileGoals = profile?.goals?.length ? profile.goals : ["Find partners"];
   const logs = getLogs();
   const rankProgress = calculateRankProgression(logs);
   const sessions = getSessions();
@@ -79,6 +82,12 @@ export default function Profile() {
             <MapPin aria-hidden size={17} strokeWidth={2.2} />
             {profile?.location || "Boulder, Colorado"}
           </p>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            <BadgePill tone="dark">{profileLevel}</BadgePill>
+            {profileGoals.map((goal) => (
+              <BadgePill key={goal} tone="mint">{goal}</BadgePill>
+            ))}
+          </div>
         </section>
 
         <section className="grid grid-cols-2 gap-4">
